@@ -1,5 +1,11 @@
 import express from "express";
 import bodyParser from "body-parser";
+import TokenGenerator from 'token-generator';
+
+const tokenGenerator = new TokenGenerator({
+  salt: 'your secret ingredient for this magic recipe hahaha',
+  timestampMap: 'abcdefghij', // 10 chars array for obfuscation purposes
+});
 
 import vine from '@vinejs/vine'
 
@@ -91,11 +97,29 @@ app.post("/register", async (req, res) => {
     res.json({message: "Registration Successful for " + username + "."});
 });
 
-app.post("/generate", async (req, res) => {
+app.post("/gen-token", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    
-    res.json({message: "Token generated for " + username + "."});
+
+    let result = await db.query(
+      "SELECT * FROM users WHERE us = $1 AND PW = $2",
+      [username, password]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(409);
+      res.json({error: "Username and password combination error."});
+      return;
+    }
+    let found_user_id = result.rows[0]['id'];
+
+    var token = tokenGenerator.generate();
+    res.json({message: "Token generated for " + username, token: token});
+
+    await db.query(
+      "INSERT INTO tokens (user_id, token) VALUES ($1, $2)",
+      [found_user_id, token]
+    );
 });
 
 app.listen(port, () => {
