@@ -23,11 +23,11 @@ const userpwSchema = vine.object({
 
 import pg from "pg";
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "varvault_db",
-  password: "handlepc12",
-  port: 5432,
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DB,
+  password: process.env.PG_PW,
+  port: process.env.PG_PORT,
 });
 db.connect();
 
@@ -114,12 +114,42 @@ app.post("/gen-token", async (req, res) => {
     let found_user_id = result.rows[0]['id'];
 
     var token = tokenGenerator.generate();
-    res.json({message: "Token generated for " + username, token: token});
-
     await db.query(
       "INSERT INTO tokens (user_id, token) VALUES ($1, $2)",
       [found_user_id, token]
     );
+
+    res.json({message: "Token generated for " + username, token: token, expires_in: "30 days"});
+});
+
+app.post("/add-variable", async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  const variable_name = req.body.variable_name;
+  const value = req.body.value;
+
+  let result = await db.query(
+    "SELECT * FROM users WHERE us = $1 AND PW = $2",
+    [username, password]
+  );
+
+  if (result.rows.length === 0) {
+    res.status(409);
+    res.json({error: "Username and password combination error."});
+    return;
+  }
+  let found_user_id = result.rows[0]['id'];
+
+  try {
+    await db.query(
+      "INSERT INTO variables (user_id, variable_name, value, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)",
+      [found_user_id, variable_name, value]
+    );
+
+    res.json({message: "Variable is added", variable: variable_name, value: value});
+  } catch {
+    res.json({error: "Error occured at SQL: INSERT."});
+  }
 });
 
 app.listen(port, () => {
