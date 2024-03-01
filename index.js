@@ -1,9 +1,11 @@
 import express from "express";
 import bodyParser from "body-parser";
 import TokenGenerator from 'token-generator';
+import bcrypt from "bcrypt";
+const saltRounds = 10;
 
 const tokenGenerator = new TokenGenerator({
-  salt: 'your secret ingredient for this magic recipe hahaha',
+  salt: 'your secret ingredient for this magic recipe.',
   timestampMap: 'abcdefghij', // 10 chars array for obfuscation purposes
 });
 
@@ -68,13 +70,16 @@ function isValidUsername(username) {
 }
 
 app.post("/register", async (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
-    console.log([username,password]);
+    let username    =   req.body.username;
+    let password    =   req.body.password;
+
     let result = await db.query(
       "SELECT * FROM users WHERE us = $1",
       [username]
-    );
+    ); if (result.rows.length > 0) {
+      res.status(409);
+      res.json({error: "Username already registered"});
+    }
 
     let data = {username: username, password: password}
     const validator = vine.compile(userpwSchema);
@@ -82,85 +87,104 @@ app.post("/register", async (req, res) => {
     catch(error) {
       res.status(error["status"]);
       res.json({error: error});
-      return;
-    }
-    if (result.rows.length > 0) {
-      res.status(409);
-      res.json({error: "Username already registered"});
-      return;
     }
     
-    await db.query(
-      "INSERT INTO users (us, pw) VALUES ($1, $2)",
-      [username, password]
-    );
-    res.json({message: "Registration Successful for " + username + "."});
+    bcrypt.hash(password, saltRounds, async (err,hash) => {
+      if (err) {
+        res.json({error: "Error occured in hashing."});
+      } else {
+        await db.query(
+          "INSERT INTO users (us, pw) VALUES ($1, $2)",
+          [username, hash]
+        );
+        res.json({message: "Registration Successful for " + username + "."});
+      }
+    });
 });
 
 app.post("/gen-token", async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username        =   req.body.username;
+    const password_input  =   req.body.password;
 
     let result = await db.query(
-      "SELECT * FROM users WHERE us = $1 AND PW = $2",
-      [username, password]
-    );
-
-    if (result.rows.length === 0) {
+      "SELECT * FROM users WHERE us = $1",
+      [username]
+    ); if (result.rows.length < 1) {
       res.status(409);
-      res.json({error: "Username and password combination error."});
+      res.json({error: "Username and password combination error.."});
       return;
     }
-    let found_user_id = result.rows[0]['id'];
 
-    var token = tokenGenerator.generate();
-    await db.query(
-      "INSERT INTO tokens (user_id, token) VALUES ($1, $2)",
-      [found_user_id, token]
-    );
-
-    res.json({message: "Token generated for " + username, token: token, expires_in: "30 days"});
+    let stored_user_id = result.rows[0]['id'];
+    let stored_user_pw = result.rows[0]['pw'];
+    bcrypt.compare(password_input, stored_user_pw, async (err, result) => {
+      if (err) {
+        res.json({error: "Error occured in hash comparing."});
+      } else {
+        if (result) {
+          var token = tokenGenerator.generate();
+          await db.query(
+            "INSERT INTO tokens (user_id, token) VALUES ($1, $2)",
+            [stored_user_id, token]
+          );
+          res.json({message: "Token generated for " + username, token: token, expires_in: "30 days"});
+        } else {
+          res.status(409);
+          res.json({error: "Username and password combination error."});
+        }
+      }
+    });
 });
 
 app.post("/add-variable", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const variable_name = req.body.variable_name;
-  const value = req.body.value;
+  const username        =   req.body.username;
+  const password_input  =   req.body.password;
+  const variable_name   =   req.body.variable_name;
+  const value           =   req.body.value;
 
   let result = await db.query(
-    "SELECT * FROM users WHERE us = $1 AND PW = $2",
-    [username, password]
-  );
-
-  if (result.rows.length === 0) {
+    "SELECT * FROM users WHERE us = $1",
+    [username]
+  ); if (result.rows.length < 1) {
     res.status(409);
-    res.json({error: "Username and password combination error."});
+    res.json({error: "Username and password combination error.."});
     return;
   }
-  let found_user_id = result.rows[0]['id'];
 
-  try {
-    await db.query(
-      "INSERT INTO variables (user_id, variable_name, value, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)",
-      [found_user_id, variable_name, value]
-    );
-
-    res.json({message: "Variable is added", variable: variable_name, value: value});
-  } catch {
-    res.json({error: "Error occured at SQL: INSERT."});
+  result = await db.query(
+    "SELECT * FROM variables WHERE variable_name = $1",
+    [variable_name]
+  ); if (result.rows.length > 0) {
+    res.status(409);
+    res.json({error: "You already have used that variable name, try another."});
+    return;
   }
+
+  let stored_user_id = result.rows[0]['id'];
+  let stored_user_pw = result.rows[0]['pw'];
+  bcrypt.compare(password_input, stored_user_pw, async (err, result) => {
+    if (err) {
+      res.json({error: "Error occured in hash comparing."});
+    } else {
+      if (result) {
+        try {
+          await db.query(
+            "INSERT INTO variables (user_id, variable_name, value, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)",
+            [stored_user_id, variable_name, value]
+          );
+      
+          res.json({message: "Variable is added", variable: variable_name, value: value});
+        } catch {
+          res.json({error: "Error occured at SQL: INSERT."});
+        }
+      } else {
+        res.status(409);
+        res.json({error: "Username and password combination error."});
+      }
+    }
+  });  
 });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-
-let users = [
-    {id: 1, username: "dendencyber", password: "haha123"},
-    {id: 2, username: "dendencyber2", password: "haha1234"},
-];
-
-let tokens = [
-    {id:1, token: "abcdefghijkl", timestamp: "04.04.04"}
-]
