@@ -1,3 +1,16 @@
+function CheckVariableIf(type, value) {
+  switch (type) {
+      case "numeric":
+          return !isNaN(parseFloat(value)) && isFinite(value);
+      case "text":
+          return typeof value === "string";
+      case "boolean":
+          return value === "true" || value === "false";
+      default:
+          return false; // Unsupported type
+  }
+}
+
 import express from "express";
 import bodyParser from "body-parser";
 import TokenGenerator from 'token-generator';
@@ -136,41 +149,75 @@ app.post("/gen-token", async (req, res) => {
     });
 });
 
+function DetectUndefined() {
+  for (let i = 0; i < arguments.length; i++) {if (arguments[i] === undefined) {return true;}}
+  return false;
+}
+
 app.post("/add-variable", async (req, res) => {
   const username        =   req.body.username;
-  const password_input  =   req.body.password;
+  const password        =   req.body.password;
   const variable_name   =   req.body.variable_name;
   const value           =   req.body.value;
+  let variable_type     =   req.body.variable_type;
+  let unit              =   req.body.unit;
+
+  if (DetectUndefined(username,password,variable_name,value)) {
+    res.status(409);
+    let nullVars = [];
+    if (username===undefined) {nullVars.push("username");}
+    if (password===undefined) {nullVars.push("password");}
+    if (variable_name===undefined) {nullVars.push("variable_name");}
+    if (value===undefined) {nullVars.push("value");}
+
+    res.json({error: "All fields must be specified: " + nullVars.join(',')});
+    return;
+  }
+
+  if (variable_type) {
+    if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
+      if (!CheckVariableIf(variable_type, value)) {
+        res.status(409);
+        res.json({error: "Expected " + variable_type});
+        return;
+      } 
+    } else {
+      res.status(409);
+      res.json({error: "Expected types are only numeric, text, or boolean"});
+      return;
+    }
+  } else {variable_type="text";}
+  if (unit===undefined) {unit="";}
 
   let result = await db.query(
     "SELECT * FROM users WHERE us = $1",
     [username]
   ); if (result.rows.length < 1) {
     res.status(409);
-    res.json({error: "Username and password combination error.."});
-    return;
-  }
-
-  result = await db.query(
-    "SELECT * FROM variables WHERE variable_name = $1",
-    [variable_name]
-  ); if (result.rows.length > 0) {
-    res.status(409);
-    res.json({error: "You already have used that variable name, try another."});
+    res.json({error: "Username/password error.."});
     return;
   }
 
   let stored_user_id = result.rows[0]['id'];
   let stored_user_pw = result.rows[0]['pw'];
-  bcrypt.compare(password_input, stored_user_pw, async (err, result) => {
+  bcrypt.compare(password, stored_user_pw, async (err, result) => {
     if (err) {
       res.json({error: "Error occured in hash comparing."});
     } else {
       if (result) {
+        let result2 = await db.query(
+          "SELECT * FROM variables WHERE variable_name = $1",
+          [variable_name]
+        ); if (result2.rows.length > 0) {
+          res.status(409);
+          res.json({error: "You already have used that variable name, try another."});
+          return;
+        }
+        
         try {
           await db.query(
-            "INSERT INTO variables (user_id, variable_name, value, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)",
-            [stored_user_id, variable_name, value]
+            "INSERT INTO variables (user_id, variable_name, value, variable_type,unit,updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)",
+            [stored_user_id, variable_name, value, variable_type, unit]
           );
       
           res.json({message: "Variable is added", variable: variable_name, value: value});
@@ -179,7 +226,7 @@ app.post("/add-variable", async (req, res) => {
         }
       } else {
         res.status(409);
-        res.json({error: "Username and password combination error."});
+        res.json({error: "Username/password error."});
       }
     }
   });  
