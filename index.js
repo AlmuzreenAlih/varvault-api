@@ -1,3 +1,11 @@
+import 'dotenv/config'
+import express from "express";
+import bodyParser from "body-parser";
+
+import { selectUserByUsername, insertUser } from './dbOps.js';
+import { validateUserData } from './validator.js';
+import { hashPassword } from './hash.js';
+
 function CheckVariableIf(type, value) {
   switch (type) {
       case "numeric":
@@ -11,42 +19,14 @@ function CheckVariableIf(type, value) {
   }
 }
 
-import express from "express";
-import bodyParser from "body-parser";
+
 import TokenGenerator from 'token-generator';
-import bcrypt from "bcrypt";
-const saltRounds = 10;
 
 const tokenGenerator = new TokenGenerator({
   salt: 'your secret ingredient for this magic recipe.',
   timestampMap: 'abcdefghij', // 10 chars array for obfuscation purposes
 });
 
-import vine from '@vinejs/vine'
-
-const userpwSchema = vine.object({
-  username: vine
-    .string()
-    .minLength(8)
-    .maxLength(32),
-  password: vine
-    .string()
-    .minLength(8)
-    .maxLength(32)
-})
-
-
-import pg from "pg";
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DB,
-  password: process.env.PG_PW,
-  port: process.env.PG_PORT,
-});
-db.connect();
-
-import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.SUPABASE_URI
@@ -86,151 +66,148 @@ app.post("/register", async (req, res) => {
     let username    =   req.body.username;
     let password    =   req.body.password;
 
-    let result = await db.query(
-      "SELECT * FROM users WHERE us = $1",
-      [username]
-    ); if (result.rows.length > 0) {
-      res.status(409);
-      res.json({error: "Username already registered"});
+    // Check if the username already exists
+    if ((await selectUserByUsername(username)).length > 0) {
+      return res.status(409).json({ error: "Username already registered" });
     }
 
-    let data = {username: username, password: password}
-    const validator = vine.compile(userpwSchema);
-    try {await validator.validate(data);}
-    catch(error) {
-      res.status(error["status"]);
-      res.json({error: error});
+    //Validate the user inputs
+    try {
+      await validateUserData(username, password);
+    } catch(error) {
+      return res.status(error["status"]).json({ error: error });
     }
     
-    bcrypt.hash(password, saltRounds, async (err,hash) => {
-      if (err) {
-        res.json({error: "Error occured in hashing."});
-      } else {
-        await db.query(
-          "INSERT INTO users (us, pw) VALUES ($1, $2)",
-          [username, hash]
-        );
+    //Hash the password
+    try {
+      const hashedPassword = await hashPassword(password);
+      try {
+        await insertUser(username, hashedPassword);
         res.json({message: "Registration Successful for " + username + "."});
+      } catch {
+        return res.status(400).json({ error: "Error at SQL Registration" });
       }
-    });
+    } catch {
+      return res.status(400).json({ error: "Error at password hashing" });
+    }
 });
 
-app.post("/gen-token", async (req, res) => {
-    const username        =   req.body.username;
-    const password_input  =   req.body.password;
+// app.post("/gen-token", async (req, res) => {
+//     const username        =   req.body.username;
+//     const password_input  =   req.body.password;
 
-    let result = await db.query(
-      "SELECT * FROM users WHERE us = $1",
-      [username]
-    ); if (result.rows.length < 1) {
-      res.status(409);
-      res.json({error: "Username and password combination error.."});
-      return;
-    }
+//     let result = await db.query(
+//       "SELECT * FROM users WHERE us = $1",
+//       [username]
+//     ); if (result.rows.length < 1) {
+//       res.status(409);
+//       res.json({error: "Username and password combination error.."});
+//       return;
+//     }
 
-    let stored_user_id = result.rows[0]['id'];
-    let stored_user_pw = result.rows[0]['pw'];
-    bcrypt.compare(password_input, stored_user_pw, async (err, result) => {
-      if (err) {
-        res.json({error: "Error occured in hash comparing."});
-      } else {
-        if (result) {
-          var token = tokenGenerator.generate();
-          await db.query(
-            "INSERT INTO tokens (user_id, token) VALUES ($1, $2)",
-            [stored_user_id, token]
-          );
-          res.json({message: "Token generated for " + username, token: token, expires_in: "30 days"});
-        } else {
-          res.status(409);
-          res.json({error: "Username and password combination error."});
-        }
-      }
-    });
-});
+//     let stored_user_id = result.rows[0]['id'];
+//     let stored_user_pw = result.rows[0]['pw'];
+//     bcrypt.compare(password_input, stored_user_pw, async (err, result) => {
+//       if (err) {
+//         res.json({error: "Error occured in hash comparing."});
+//       } else {
+//         if (result) {
+//           var token = tokenGenerator.generate();
+//           await db.query(
+//             "INSERT INTO tokens (user_id, token) VALUES ($1, $2)",
+//             [stored_user_id, token]
+//           );
+//           res.json({message: "Token generated for " + username, token: token, expires_in: "30 days"});
+//         } else {
+//           res.status(409);
+//           res.json({error: "Username and password combination error."});
+//         }
+//       }
+//     });
+// });
 
-function DetectUndefined() {
-  for (let i = 0; i < arguments.length; i++) {if (arguments[i] === undefined) {return true;}}
-  return false;
-}
+// function DetectUndefined() {
+//   for (let i = 0; i < arguments.length; i++) {if (arguments[i] === undefined) {return true;}}
+//   return false;
+// }
 
-app.post("/add-variable", async (req, res) => {
-  const username        =   req.body.username;
-  const password        =   req.body.password;
-  const variable_name   =   req.body.variable_name;
-  const value           =   req.body.value;
-  let variable_type     =   req.body.variable_type;
-  let unit              =   req.body.unit;
+// app.post("/add-variable", async (req, res) => {
+//   const username        =   req.body.username;
+//   const password        =   req.body.password;
+//   const variable_name   =   req.body.variable_name;
+//   const value           =   req.body.value;
+//   let variable_type     =   req.body.variable_type;
+//   let unit              =   req.body.unit;
 
-  if (DetectUndefined(username,password,variable_name,value)) {
-    res.status(409);
-    let nullVars = [];
-    if (username===undefined) {nullVars.push("username");}
-    if (password===undefined) {nullVars.push("password");}
-    if (variable_name===undefined) {nullVars.push("variable_name");}
-    if (value===undefined) {nullVars.push("value");}
+//   if (DetectUndefined(username,password,variable_name,value)) {
+//     res.status(409);
+//     let nullVars = [];
+//     if (username===undefined) {nullVars.push("username");}
+//     if (password===undefined) {nullVars.push("password");}
+//     if (variable_name===undefined) {nullVars.push("variable_name");}
+//     if (value===undefined) {nullVars.push("value");}
 
-    res.json({error: "All fields must be specified: " + nullVars.join(',')});
-    return;
-  }
+//     res.json({error: "All fields must be specified: " + nullVars.join(',')});
+//     return;
+//   }
 
-  if (variable_type) {
-    if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
-      if (!CheckVariableIf(variable_type, value)) {
-        res.status(409);
-        res.json({error: "Expected " + variable_type});
-        return;
-      } 
-    } else {
-      res.status(409);
-      res.json({error: "Expected types are only numeric, text, or boolean"});
-      return;
-    }
-  } else {variable_type="text";}
-  if (unit===undefined) {unit="";}
+//   if (variable_type) {
+//     if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
+//       if (!CheckVariableIf(variable_type, value)) {
+//         res.status(409);
+//         res.json({error: "Expected " + variable_type});
+//         return;
+//       } 
+//     } else {
+//       res.status(409);
+//       res.json({error: "Expected types are only numeric, text, or boolean"});
+//       return;
+//     }
+//   } else {variable_type="text";}
+//   if (unit===undefined) {unit="";}
 
-  let result = await db.query(
-    "SELECT * FROM users WHERE us = $1",
-    [username]
-  ); if (result.rows.length < 1) {
-    res.status(409);
-    res.json({error: "Username/password error.."});
-    return;
-  }
+//   let userQuery = await db.query(
+//     "SELECT * FROM users WHERE us = $1",
+//     [username]
+//   ); if (userQuery.rows.length < 1) {
+//     res.status(409);
+//     res.json({error: "Username/password error.."});
+//     return;
+//   }
 
-  let stored_user_id = result.rows[0]['id'];
-  let stored_user_pw = result.rows[0]['pw'];
-  bcrypt.compare(password, stored_user_pw, async (err, result) => {
-    if (err) {
-      res.json({error: "Error occured in hash comparing."});
-    } else {
-      if (result) {
-        let result2 = await db.query(
-          "SELECT * FROM variables WHERE variable_name = $1",
-          [variable_name]
-        ); if (result2.rows.length > 0) {
-          res.status(409);
-          res.json({error: "You already have used that variable name, try another."});
-          return;
-        }
+//   let stored_user_id = userQuery.rows[0]['id'];
+//   let stored_user_pw = userQuery.rows[0]['pw'];
+//   bcrypt.compare(password, stored_user_pw, async (err, result) => {
+//     if (err) {
+//       res.json({error: "Error occured in hash comparing."});
+//     } else {
+//       if (result) {
+//         let variableNameQuery = await db.query(
+//           "SELECT * FROM variables WHERE variable_name = $1",
+//           [variable_name]
+//         ); if (variableNameQuery.rows.length > 0) {
+//           res.status(409);
+//           res.json({error: "You already have used that variable name, try another."});
+//           return;
+//         }
         
-        try {
-          await db.query(
-            "INSERT INTO variables (user_id, variable_name, value, variable_type,unit,updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)",
-            [stored_user_id, variable_name, value, variable_type, unit]
-          );
+//         try {
+//           await db.query(
+//             "INSERT INTO variables (user_id, variable_name, value, variable_type,unit,updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)",
+//             [stored_user_id, variable_name, value, variable_type, unit]
+//           );
       
-          res.json({message: "Variable is added", variable: variable_name, value: value});
-        } catch {
-          res.json({error: "Error occured at SQL: INSERT."});
-        }
-      } else {
-        res.status(409);
-        res.json({error: "Username/password error."});
-      }
-    }
-  });  
-});
+//           res.json({message: "Variable is added", variable: variable_name, value: value});
+//         } catch {
+//           res.json({error: "Error occured at SQL: INSERT."});
+//         }
+//       } else {
+//         res.status(409);
+//         res.json({error: "Username/password error."});
+//       }
+//     }
+//   });  
+// });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
