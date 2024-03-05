@@ -50,3 +50,18 @@ export async function findVariableName(variable_name,stored_user_id) {
   );
   return result.rows;
 }
+export async function selectToken(token) {
+  const result = await db.query(
+    "SELECT * FROM tokens WHERE token = $1",
+    [token]
+  );
+  return result.rows;
+}
+
+//UPDATE
+export async function updateVariable(id,value) {
+  console.log(id)
+  await db.query(
+    "UPDATE variables SET value = $1 WHERE id = $2", 
+    [value,id]);
+}
