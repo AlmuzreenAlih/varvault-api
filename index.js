@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 
 import { selectUserByUsername, insertUser, insertGeneratedToken,
          findVariableName, insertVariableName, selectToken,
-         updateVariable } from './dbops.js';
+         updateVariable, deleteVariable, getAllVariables } from './dbops.js';
 import { validateUserData, DetectUndefined, CheckVariableIf } from './validator.js';
 import { comparePassword, hashPassword } from './hash.js'; // git-ignored due to security reason
 
@@ -194,15 +194,15 @@ app.post("/add-variable-viatoken", async (req, res) => {
   }
 
   // Check if user already has the variable name
-  const stored_token_id = stored_token[0]['user_id'];
-  const variable_name_found = await findVariableName(variable_name,stored_token_id);
+  const stored_token_user_id = stored_token[0]['user_id'];
+  const variable_name_found = await findVariableName(variable_name,stored_token_user_id);
   if (variable_name_found.length > 0) {
     return res.status(409).json({ error: "You already have used that variable name, try another." });
   }
 
   // Insert the variable name
   try {
-    await insertVariableName(stored_token_id, variable_name, value, variable_type, unit); 
+    await insertVariableName(stored_token_user_id, variable_name, value, variable_type, unit); 
     return res.json({ message: "Variable is added", variable: variable_name, value: value });
   } catch (SQLError) { console.log(SQLError);
     return res.status(409).json({ error: "SQL Error inserting variable name." });
@@ -230,8 +230,8 @@ app.post("/update-variable-viatoken", async (req, res) => {
   }
 
   // Check if user has the variable name
-  const stored_token_id = stored_token[0]['user_id'];
-  const variable_name_found = await findVariableName(variable_name,stored_token_id);
+  const stored_token_user_id = stored_token[0]['user_id'];
+  const variable_name_found = await findVariableName(variable_name,stored_token_user_id);
   if (variable_name_found.length < 1) {
     return res.status(409).json({ error: "Variable name not found" });
   }
@@ -248,6 +248,92 @@ app.post("/update-variable-viatoken", async (req, res) => {
   const variable_id = variable_name_found[0]["id"];
   await updateVariable(variable_id,value);
   return res.json({ message: "Variable is updated", variable: variable_name, value: value });
+});
+
+app.post("/delete-variable", async (req, res) => {
+  const token           =   req.body.token;
+  const variable_name   =   req.body.variable_name;
+
+  if (DetectUndefined(token,variable_name)) {
+    let nullVars = [];
+    if (token === undefined) {nullVars.push("token");}
+    if (variable_name === undefined) {nullVars.push("variable_name");}
+
+    return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
+  }
+
+  // Check if token is in the database
+  const stored_token = await selectToken(token);
+  if ((stored_token.length < 1)) {
+    return res.status(409).json({ error: "Token not found" });
+  }
+
+  // Check if user has the variable name
+  const stored_token_user_id = stored_token[0]['user_id'];
+  const variable_name_found = await findVariableName(variable_name,stored_token_user_id);
+  if (variable_name_found.length < 1) {
+    return res.status(409).json({ error: "Variable name not found" });
+  }
+
+  // SQL DELETE the variable
+  const variable_id = variable_name_found[0]["id"];
+  await deleteVariable(variable_id);
+  return res.json({ message: "Variable "+ variable_name + " is deleted" });
+});
+
+app.post("/read-variable", async (req, res) => {
+  const token = req.body.token;
+  const variable_name = req.body.variable_name;
+  
+  if (DetectUndefined(token,variable_name)) {
+    let nullVars = [];
+    if (token === undefined) {nullVars.push("token");}
+    if (variable_name === undefined) {nullVars.push("variable_name");}
+
+    return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
+  }
+  
+  // Check if token is in the database
+  const stored_token = await selectToken(token);
+  if ((stored_token.length < 1)) {
+    return res.status(409).json({ error: "Token not found" });
+  }
+
+  // Check if variable name exists
+  if (variable_name !== undefined) {
+    const stored_token_user_id = stored_token[0]['user_id'];
+    const variable_name_found = await findVariableName(variable_name, stored_token_user_id);
+    if (variable_name_found.length < 1) {
+      return res.status(409).json({ error: "Variable name not found" });
+    }
+    return res.json({ [variable_name] : variable_name_found[0]["value"] });
+  }
+});
+
+app.post("/read-variables/:format", async (req, res) => {
+  const token = req.body.token;
+
+  // Check if token is in the database
+  const stored_token = await selectToken(token);
+  if ((stored_token.length < 1)) {
+    return res.status(409).json({ error: "Token not found" });
+  }
+
+  const stored_token_user_id = stored_token[0]['user_id'];
+
+  // Get all variables for the user
+  if (req.params.format == "format1") {
+    const AllVariables = await getAllVariables(stored_token_user_id)
+    return res.json({ variables: AllVariables });
+  } else if (req.params.format == "format2") {
+    const AllVariables = await getAllVariables(stored_token_user_id)
+    var AllVariablesObj = {};
+    AllVariables.forEach(element => {
+      AllVariablesObj[element.variable_name] = element.value;
+    });
+    
+    return res.json({ variables: AllVariablesObj });
+  } else {return res.json({ error: "formats are only format1 and format2" });}
 });
 
 app.listen(port, () => {

@@ -57,11 +57,23 @@ export async function selectToken(token) {
   );
   return result.rows;
 }
-
+export async function getAllVariables(stored_user_id) {
+  const result = await db.query(
+    "SELECT variable_name, value, updated_at FROM variables WHERE user_id = $1",
+    [stored_user_id]
+  );
+  return result.rows;
+}
 //UPDATE
 export async function updateVariable(id,value) {
-  console.log(id)
   await db.query(
     "UPDATE variables SET value = $1 WHERE id = $2", 
     [value,id]);
+}
+
+//DELETE
+export async function deleteVariable(id) {
+  await db.query(
+    "DELETE FROM variables WHERE id = $1", 
+    [id]);
 }
