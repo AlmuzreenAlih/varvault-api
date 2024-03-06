@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  font-family: "Instrument Sans";
+}
+
+strong {
+  font-weight: 600;
+}
+
+ul, ol {
+  list-style-position: outside;
+  margin-left: 15px;
+}
+
+a, p, li, ol {
+  color: rgb(189, 184, 184);
+}
+
+.active {
+  background-color: rgb(72, 41, 93);
+}
+
+.content {
+  padding: 50px;
+  background-color: transparent;
+}
+.content .title {
+  font-size: 30px;
+}
+.content .sub-title {
+  font-size: 20px;
+}
+.content .paragraph {
+  font-size: 16px;
+}
+.content .bullets1 {
+  font-size: 16px;
+}
+.content p, .content li, .content ol {
+  margin-bottom: 15px;
+}
+
+strong {
+  color: white;
+}
+
+#mainParent {
+  background-color: rgb(46, 46, 46);
+  display: grid;
+  grid-template-columns: 1fr 3.5fr;
+  grid-template-rows: 1fr 9fr;
+  height: 100vh;
+  gap: 2px;
+}
+#mainParent #header {
+  grid-column: span 2;
+  background-color: rgb(18, 17, 19);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+}
+#mainParent #header #logo-box {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-left: 10px;
+  color: white;
+  flex-basis: 20%;
+}
+#mainParent #header #logo-box img {
+  border: 3px solid rgb(202, 91, 242);
+  border-radius: 8px;
+  height: 40px;
+  margin-right: 3px;
+}
+#mainParent #header #search {
+  flex-basis: 70%;
+}
+#mainParent #header #dark-mode-box {
+  background-color: yellow;
+  flex-basis: 5%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#mainParent #header #github-box {
+  background-color: red;
+  flex-basis: 5%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#mainParent #sidebar {
+  background-color: rgb(18, 17, 19);
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  padding-top: 12px;
+  font-size: 14px;
+}
+#mainParent #sidebar a, #mainParent #sidebar strong {
+  padding: 7px;
+  padding-inline: 22px;
+}
+#mainParent #sidebar a {
+  width: 100%;
+}
+#mainParent #content {
+  background-color: rgb(18, 17, 19);
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  overflow: auto;
+}
+#mainParent #content .bullets1 {
+  font-size: 16px;
+}/*# sourceMappingURL=main.css.map */

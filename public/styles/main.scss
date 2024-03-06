@@ -1,0 +1,151 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    // list-style: none;
+    text-decoration: none;
+
+    font-family: "Instrument Sans";
+    // font-size: 12px;
+}
+
+strong {
+    font-weight: 600;
+}
+
+ul,ol {
+    list-style-position: outside;
+    margin-left: 15px;
+}
+
+a,p,li,ol {
+    color: rgb(189, 184, 184);
+}
+
+.active {
+    background-color: rgb(72, 41, 93);
+}
+
+.content {
+    padding: 50px;
+    // padding-right: 100px;
+    background-color: transparent;
+    // display: flex;
+    // flex-direction: column;
+    // align-items: start;
+    // justify-content: start;
+
+    
+    .title {
+        font-size: 30px;
+    }
+    .sub-title {
+        font-size: 20px;
+    }
+    .paragraph {
+        font-size: 16px;
+    }
+    .bullets1 {
+        font-size: 16px;
+    }
+
+    p,li,ol {
+        margin-bottom: 15px;
+    }
+}
+
+strong {
+    color: white;
+}
+
+$mobile_size: 1000px;
+$mobile_factor: 1;
+@mixin mobile {
+    @media (max-width: $mobile_size) {
+        @content;
+    }
+}
+
+#mainParent {
+    background-color: rgb(46, 46, 46);
+    display: grid;
+    grid-template-columns: 1fr 3.5fr;
+    grid-template-rows: 1fr 9fr;
+    height: 100vh;
+    gap: 2px;
+
+    #header {
+        grid-column: span 2;
+        background-color: rgb(18, 17, 19);
+        display: flex;
+        align-items: center;
+        justify-content:space-between;
+
+        position: sticky;
+
+        #logo-box {
+            background-color: transparent;
+            display: flex;
+            align-items: center; 
+            justify-content: start;
+            padding-left:10px;
+            color:white;
+            img {
+                border: 3px solid rgb(202, 91, 242);
+                border-radius: 8px;
+                height:40px;
+                margin-right:3px;
+            }
+            flex-basis: 20%;
+        }
+        #search {
+            // background-color: blue;
+            flex-basis: 70%;
+        }
+        #dark-mode-box {
+            background-color: yellow;
+            flex-basis: 5%;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #github-box {
+            background-color: red;
+            flex-basis: 5%;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    #sidebar {
+        background-color: rgb(18, 17, 19);;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: start;
+        padding-top: 12px;
+        font-size: 14px;
+        // position: sticky;
+        a, strong {
+            padding: 7px;
+            padding-inline: 22px;
+        }
+
+        a {
+            width: 100%;
+        }
+    }
+    #content {
+        background-color: rgb(18, 17, 19);;
+        display: flex;
+        align-items: start;
+        justify-content: start;
+
+        overflow: auto;
+        .bullets1 {
+            font-size: 16px;
+        }
+    }
+}

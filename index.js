@@ -26,16 +26,28 @@ async function fetchUsers() {
   }
 }
 
+
 // fetchUsers()
 
 const app = express();
 const port = 3000;
 
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/", async (req, res) => {
-    res.render("index.ejs", { content: "API Response." });
+app.get("/:tab", async (req, res) => {
+       if (req.params.tab == "register")          {res.render("index.ejs", { activeTab: "regi" });}
+  else if (req.params.tab == "generate-token")    {res.render("index.ejs", { activeTab: "gene" });}
+  else if (req.params.tab == "add-variable")      {res.render("index.ejs", { activeTab: "addv" });}
+  else if (req.params.tab == "update-variable")   {res.render("index.ejs", { activeTab: "upda" });}
+  else if (req.params.tab == "delete-variable")   {res.render("index.ejs", { activeTab: "dele" });}
+  else if (req.params.tab == "read-variable")     {res.render("index.ejs", { activeTab: "read" });}
+  else if (req.params.tab == "read-variable-all") {res.render("index.ejs", { activeTab: "reaD" });}
   });
+
+app.get("/", async (req, res) => {
+    res.render("index.ejs", { activeTab: "ovrv" });
+});
 
 function isValidUsername(username) {
   if (username.length < 6) {return false;}

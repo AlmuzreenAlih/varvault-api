@@ -4,8 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    HelloWorld
+    <div id="mainParent">
+        <article id="header">
+            <section id="logo-box">
+                <img src="logo.png" alt="">
+                <p>VARVAULT</p>
+            </section>
+            <section id="search">
+a
+            </section>
+            <section id="dark-mode-box">
+b
+            </section>
+            <section id="github-box">
+c
+            </section>
+        </article>
+        <article id="sidebar">
+            <strong>Getting Started</strong>
+            <a href="/"                     class="<%= activeTab === 'ovrv' ? 'active' : '' %>">Overview</a>
+            <strong>Methods</strong>
+            <a href="/register"             class="<%= activeTab === 'regi' ? 'active' : '' %>">Registering</a>
+            <a href="/generate-token"       class="<%= activeTab === 'gene' ? 'active' : '' %>">Generating a token</a>
+            <a href="/add-variable"         class="<%= activeTab === 'addv' ? 'active' : '' %>">Adding a variable</a>
+            <a href="/update-variable"      class="<%= activeTab === 'upda' ? 'active' : '' %>">Updating a variable</a>
+            <a href="/delete-variable"      class="<%= activeTab === 'dele' ? 'active' : '' %>">Deleting a variable</a>
+            <a href="/read-variable"        class="<%= activeTab === 'read' ? 'active' : '' %>">Reading a variable</a>
+            <a href="/read-variable-all"    class="<%= activeTab === 'reaD' ? 'active' : '' %>">Reading all variables</a>
+        </article>
+        <article id="content">
+            <% if (activeTab === 'ovrv') { %>
+                <%- include('overview') %>
+            <% } %>
+            
+        </article>
+    </div>
 </body>
 </html>
