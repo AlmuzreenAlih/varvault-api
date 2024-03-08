@@ -18,7 +18,7 @@
                 <p>VARVAULT</p>
             </section>
             <section id="search">
-a
+                <input type="text" placeholder="Search">
             </section>
             <section id="dark-mode-box">
 b
@@ -43,8 +43,14 @@ c
             <% if (activeTab === 'ovrv') { %>
                 <%- include('overview') %>
             <% } %>
+
+            <% if (activeTab === 'regi') { %>
+                <%- include('register') %>
+            <% } %>
             
         </article>
     </div>
+    <p id="message" class="hidden">Copied to Clipboard</p>
+    <script src="functions.js"></script>
 </body>
 </html>

@@ -21,6 +21,24 @@ a, p, li, ol {
 
 .active {
   background-color: rgb(72, 41, 93);
+  background-color: #22092C;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+#message {
+  background-color: #61197d;
+  position: fixed;
+  z-index: 100;
+  margin: 10px;
+  padding: 10px;
+  bottom: 0;
+  right: 0;
+  border: 1px solid #888;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
 }
 
 .content {
@@ -39,8 +57,93 @@ a, p, li, ol {
 .content .bullets1 {
   font-size: 16px;
 }
-.content p, .content li, .content ol {
+.content p, .content li, .content ol, .content section {
   margin-bottom: 15px;
+}
+.content section.httplink:hover {
+  box-shadow: 0px 0px 20px rgba(60, 211, 123, 0.5);
+  cursor: pointer;
+}
+.content .httplink {
+  background-color: transparent;
+  border: 4px solid #68D696;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+.content .httplink .httplinkbody {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  color: white;
+  padding: 2px;
+}
+.content .httplink .httplinkbody div:nth-child(1) {
+  background-color: #68D696;
+  color: black;
+  padding: 3px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  font-weight: 700;
+  margin-right: 5px;
+}
+.content .httplink .httplinkbody div:nth-child(3) {
+  position: absolute;
+  right: 5px;
+  top: 55%;
+  transform: translateY(-50%);
+  color: #68D696;
+  margin-left: 5px;
+}
+.content .httppost {
+  font-size: 30px;
+  border: 3px solid #68D696;
+  color: #68D696;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
+}
+.content .tc113 {
+  grid-template-columns: 1fr 1fr 3fr;
+}
+.content .tr111 {
+  grid-template-rows: 1fr 1fr 1fr;
+}
+.content .table {
+  display: grid;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
+  width: 100%;
+  overflow: hidden;
+  color: white;
+  gap: 1px;
+}
+.content .table .pt1 {
+  margin-left: 16px;
+  display: flex;
+  font-weight: 500;
+}
+.content .table .pt2 {
+  margin-left: 32px;
+  display: flex;
+  font-weight: 500;
+}
+.content .table .key {
+  color: #C82C6D;
+  margin-right: 4px;
+}
+.content .table .value {
+  color: #00A67D;
+  margin-left: 8px;
+}
+.content .table .thead {
+  background-color: #494949;
+  padding: 7px;
+  font-weight: 700;
+}
+.content .table .tbody {
+  background-color: rgb(17, 16, 18);
+  padding: 7px;
 }
 
 strong {
@@ -49,19 +152,22 @@ strong {
 
 #mainParent {
   background-color: rgb(46, 46, 46);
-  display: grid;
-  grid-template-columns: 1fr 3.5fr;
-  grid-template-rows: 1fr 9fr;
-  height: 100vh;
-  gap: 2px;
+  height: -moz-fit-content;
+  height: fit-content;
+  width: 10vw;
 }
 #mainParent #header {
-  grid-column: span 2;
-  background-color: rgb(18, 17, 19);
+  background-color: rgb(17, 16, 18);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
+  position: fixed;
+  z-index: 1;
+  height: 50px;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  border: 2px solid rgb(46, 46, 46);
 }
 #mainParent #header #logo-box {
   background-color: transparent;
@@ -70,16 +176,30 @@ strong {
   justify-content: start;
   padding-left: 10px;
   color: white;
-  flex-basis: 20%;
+  flex-basis: 24%;
 }
 #mainParent #header #logo-box img {
-  border: 3px solid rgb(202, 91, 242);
+  border: 1px solid rgb(202, 91, 242);
+  border: 3px solid #872341;
   border-radius: 8px;
   height: 40px;
   margin-right: 3px;
 }
 #mainParent #header #search {
-  flex-basis: 70%;
+  flex-basis: 66%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+#mainParent #header #search input {
+  padding-left: 8px;
+  padding-block: 4px;
+  font-size: 16px;
+  width: 45%;
+  border: 1px solid #888;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
 }
 #mainParent #header #dark-mode-box {
   background-color: yellow;
@@ -99,12 +219,19 @@ strong {
 }
 #mainParent #sidebar {
   background-color: rgb(18, 17, 19);
+  position: fixed;
+  z-index: 1;
+  top: 48px;
+  left: 0;
+  width: 23%;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: start;
   padding-top: 12px;
   font-size: 14px;
+  border: 2px solid rgb(46, 46, 46);
 }
 #mainParent #sidebar a, #mainParent #sidebar strong {
   padding: 7px;
@@ -115,6 +242,13 @@ strong {
 }
 #mainParent #content {
   background-color: rgb(18, 17, 19);
+  position: absolute;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  padding-top: 50px;
+  padding-left: 23%;
+  overflow: auto;
   display: flex;
   align-items: start;
   justify-content: start;
