@@ -6,6 +6,52 @@
   font-family: "Instrument Sans";
 }
 
+html {
+  font-size: 16px;
+}
+
+:root {
+  --color_theme1: #22092C;
+  --color_theme2: #61197d;
+  --color_mode: rgb(17, 16, 18);
+  --color_contrast: rgb(40, 40, 40);
+  --color_logo: #872341;
+  --text_color_title: white;
+  --text_color_secondary: rgb(189, 184, 184);
+  --color_post: #68D696;
+  --color_post2: rgba(58, 185, 111, 0.75);
+  --moon_visibility: visible;
+  --sun_visibility: hidden;
+}
+
+.lightmode {
+  --color_theme1: #c587dd;
+  --color_theme2: #61197d;
+  --color_mode: white;
+  --color_contrast: rgb(190, 190, 190);
+  --text_color_title: black;
+  --text_color_secondary: rgb(70,70,70);
+  --color_post: #3ab96f;
+  --color_post2: rgba(58, 185, 111, 0.75);
+  --moon_visibility: hidden;
+  --sun_visibility: visible;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.moon {
+  position: absolute;
+  color: var(--text_color_title);
+  visibility: var(--moon_visibility);
+}
+
+.sun {
+  color: var(--text_color_title);
+  visibility: var(--sun_visibility);
+}
+
 strong {
   font-weight: 600;
 }
@@ -16,12 +62,13 @@ ul, ol {
 }
 
 a, p, li, ol {
-  color: rgb(189, 184, 184);
+  color: var(--text_color_secondary);
 }
 
 .active {
-  background-color: rgb(72, 41, 93);
-  background-color: #22092C;
+  background-color: var(--color_theme1);
+  color: var(--text_color_title);
+  font-weight: 400;
 }
 
 .hidden {
@@ -29,46 +76,49 @@ a, p, li, ol {
 }
 
 #message {
-  background-color: #61197d;
+  background-color: var(--color_theme2);
   position: fixed;
   z-index: 100;
   margin: 10px;
   padding: 10px;
   bottom: 0;
   right: 0;
+  color: white;
   border: 1px solid #888;
   border-radius: 8px;
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
 }
 
 .content {
-  padding: 50px;
-  background-color: transparent;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 50px;
 }
 .content .title {
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 .content .sub-title {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .content .paragraph {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .content .bullets1 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .content p, .content li, .content ol, .content section {
   margin-bottom: 15px;
 }
+.content .linkpost {
+  border: 4px solid var(--color_post);
+}
 .content section.httplink:hover {
-  box-shadow: 0px 0px 20px rgba(60, 211, 123, 0.5);
+  box-shadow: 0px 0px 20px var(--color_post2);
   cursor: pointer;
 }
 .content .httplink {
   background-color: transparent;
-  border: 4px solid #68D696;
   border-radius: 8px;
-  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
   position: relative;
 }
 .content .httplink .httplinkbody {
@@ -76,12 +126,12 @@ a, p, li, ol {
   display: flex;
   align-items: center;
   justify-content: start;
-  color: white;
+  color: var(--text_color_title);
   padding: 2px;
 }
 .content .httplink .httplinkbody div:nth-child(1) {
-  background-color: #68D696;
-  color: black;
+  background-color: var(--color_post);
+  color: var(--color_mode);
   padding: 3px;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
@@ -93,13 +143,14 @@ a, p, li, ol {
   right: 5px;
   top: 55%;
   transform: translateY(-50%);
-  color: #68D696;
+  color: var(--color_post);
   margin-left: 5px;
 }
 .content .httppost {
-  font-size: 30px;
-  border: 3px solid #68D696;
-  color: #68D696;
+  font-size: 1.875rem;
+  padding-inline: 4px;
+  border: 3px solid var(--color_post);
+  color: var(--color_post);
   border-radius: 8px;
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
 }
@@ -115,7 +166,7 @@ a, p, li, ol {
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
   width: 100%;
   overflow: hidden;
-  color: white;
+  color: var(--text_color_title);
   gap: 1px;
 }
 .content .table .pt1 {
@@ -142,32 +193,31 @@ a, p, li, ol {
   font-weight: 700;
 }
 .content .table .tbody {
-  background-color: rgb(17, 16, 18);
+  background-color: var(--color_mode);
   padding: 7px;
 }
 
 strong {
-  color: white;
+  color: var(--text_color_title);
 }
 
 #mainParent {
-  background-color: rgb(46, 46, 46);
   height: -moz-fit-content;
   height: fit-content;
   width: 10vw;
 }
 #mainParent #header {
-  background-color: rgb(17, 16, 18);
+  background-color: var(--color_mode);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   height: 50px;
   width: 100vw;
   top: 0;
   left: 0;
-  border: 2px solid rgb(46, 46, 46);
+  border: 2px solid var(--color_contrast);
 }
 #mainParent #header #logo-box {
   background-color: transparent;
@@ -175,14 +225,15 @@ strong {
   align-items: center;
   justify-content: start;
   padding-left: 10px;
-  color: white;
+  color: var(--text_color_title);
   flex-basis: 24%;
 }
 #mainParent #header #logo-box img {
   border: 1px solid rgb(202, 91, 242);
-  border: 3px solid #872341;
+  border: 3px solid var(--color_logo);
   border-radius: 8px;
-  height: 40px;
+  height: 30px;
+  margin-left: 10px;
   margin-right: 3px;
 }
 #mainParent #header #search {
@@ -191,11 +242,12 @@ strong {
   display: flex;
   align-items: center;
   justify-content: start;
+  visibility: hidden;
 }
 #mainParent #header #search input {
   padding-left: 8px;
   padding-block: 4px;
-  font-size: 16px;
+  font-size: 1.25rem;
   width: 45%;
   border: 1px solid #888;
   border-radius: 8px;
@@ -216,9 +268,14 @@ strong {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 20px;
+}
+#mainParent #header #github-box svg {
+  color: var(--text_color_title);
+  height: 22px;
 }
 #mainParent #sidebar {
-  background-color: rgb(18, 17, 19);
+  background-color: var(--color_mode);
   position: fixed;
   z-index: 1;
   top: 48px;
@@ -230,8 +287,8 @@ strong {
   align-items: start;
   justify-content: start;
   padding-top: 12px;
-  font-size: 14px;
-  border: 2px solid rgb(46, 46, 46);
+  font-size: 0.875rem;
+  border: 2px solid var(--color_contrast);
 }
 #mainParent #sidebar a, #mainParent #sidebar strong {
   padding: 7px;
@@ -241,7 +298,7 @@ strong {
   width: 100%;
 }
 #mainParent #content {
-  background-color: rgb(18, 17, 19);
+  background-color: var(--color_mode);
   position: absolute;
   width: 100vw;
   top: 0;
@@ -255,5 +312,5 @@ strong {
   overflow: auto;
 }
 #mainParent #content .bullets1 {
-  font-size: 16px;
+  font-size: 1rem;
 }/*# sourceMappingURL=main.css.map */

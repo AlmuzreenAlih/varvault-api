@@ -27,3 +27,7 @@ $("section.httplink").on( "click", function() {
   copyToClipboard("http://www.varvault.com/register");
   showMessage();
 });
+
+$("#dark-mode-box").on( "click", function() {
+  $("#mainParent").toggleClass("lightmode")
+});

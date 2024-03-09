@@ -1,3 +1,12 @@
+@function set-text-color($color) {
+    @if (lightness($color) > 40%) {
+      @return #000;
+    } @else {
+      @return #fff;
+    }
+  }
+  
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -9,6 +18,63 @@
     // font-size: 12px;
 }
 
+html {
+    font-size: 16px;
+}
+
+$mobile_size: 1000px;
+$mobile_factor: 1;
+@mixin mobile {
+    @media (max-width: $mobile_size) {
+        @content;
+    }
+}
+
+$font_title: 1.875rem;
+$font_sub_title: 1.25rem;
+$font_default: 1rem;
+$font_paragraph: 1rem;
+$font_sidebar: 0.875rem;
+
+$light_theme: true !default;
+:root {
+--color_theme1: #22092C;
+--color_theme2: #61197d;
+--color_mode: rgb(17, 16, 18);
+--color_contrast: rgb(40, 40, 40);
+--color_logo: #872341;
+--text_color_title: white;
+// --color_mode: black;
+--text_color_secondary: rgb(189, 184, 184);
+--color_post: #68D696;
+--color_post2: rgba(58, 185, 111, 0.75);
+
+--moon_visibility: visible;
+--sun_visibility: hidden;
+}
+
+.lightmode {
+    --color_theme1: #c587dd;
+    --color_theme2: #61197d;
+    --color_mode: white;
+    --color_contrast: rgb(190, 190, 190);
+    --text_color_title: black;
+    --text_color_secondary: rgb(70,70,70);
+    --color_post: #3ab96f;
+    --color_post2: rgba(58, 185, 111, 0.75);
+    // --color_post: #dfb921;
+    --moon_visibility: hidden;
+    --sun_visibility: visible;
+}
+
+.pointer {cursor: pointer;}
+
+.moon {position: absolute; 
+    color: (var(--text_color_title)); visibility: var(--moon_visibility);
+}
+.sun  {color: var(--text_color_title); visibility: var(--sun_visibility);}
+
+// var(--color_mode): white !default;;
 strong {
     font-weight: 600;
 }
@@ -19,13 +85,13 @@ ul,ol {
 }
 
 a,p,li,ol {
-    color: rgb(189, 184, 184);
+    color: var(--text_color_secondary);
 }
 
 .active {
-    background-color: rgb(72, 41, 93);
-    background-color: #22092C;
-    
+    background-color: var(--color_theme1);
+    color: var(--text_color_title);
+    font-weight: 400;
 }
 
 .hidden {
@@ -33,56 +99,46 @@ a,p,li,ol {
 }
 
 #message {
-    background-color: #61197d;
+    background-color: var(--color_theme2);
     position: fixed;
     z-index: 100;
     margin:10px;
     padding:10px;
     bottom:0; right:0;
-
+    color: white;
     border: 1px solid #888;
     border-radius: 8px;
     box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5)
 }
 
 .content {
-    padding: 50px;
-    // padding-right: 100px;
-    background-color: transparent;
-    // display: flex;
-    // flex-direction: column;
-    // align-items: start;
-    // justify-content: start;
-
-    
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 50px;
     .title {
-        font-size: 30px;
+        font-size: $font_title;
     }
 
     .sub-title {
-        font-size: 20px;
+        font-size: $font_sub_title;
     }
     .paragraph {
-        font-size: 16px;
+        font-size: $font_paragraph;
     }
     .bullets1 {
-        font-size: 16px;
+        font-size: $font_paragraph;
     }
 
     p,li,ol,section {
         margin-bottom: 15px;
     }
 
-    section.httplink:hover {
-        box-shadow: 0px 0px 20px rgba(60, 211, 123, 0.5);
-        cursor: pointer;
-    }
+    .linkpost { border: 4px solid var(--color_post); }
+    section.httplink:hover { box-shadow: 0px 0px 20px var(--color_post2); cursor: pointer; }
 
     .httplink {
         background-color: transparent;
-        border: 4px solid #68D696;
         border-radius: 8px;
-        box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
         position: relative;
 
         .httplinkbody {
@@ -90,12 +146,13 @@ a,p,li,ol {
             display: flex;
             align-items: center;
             justify-content: start;
-            color: white;
+            color: var(--text_color_title);
             padding: 2px;
 
             div:nth-child(1) {
-                background-color: #68D696;
-                color: black;
+                background-color: var(--color_post);
+                color: var(--color_mode);
+
                 padding:3px;
                 border-top-left-radius: 2px;
                 border-bottom-left-radius: 2px;
@@ -108,16 +165,17 @@ a,p,li,ol {
                 right: 5px;
                 top: 55%;        
                 transform: translateY(-50%);
-                color:#68D696;
+                color:var(--color_post);
                 margin-left: 5px;
             }
         }
     }
     
     .httppost {
-        font-size: 30px;
-        border: 3px solid #68D696;
-        color: #68D696;
+        font-size: $font_title;
+        padding-inline:4px;
+        border: 3px solid var(--color_post);
+        color: var(--color_post);
         border-radius: 8px;
         box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
     }
@@ -139,7 +197,7 @@ a,p,li,ol {
         box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
         width:100%;
         overflow: hidden;
-        color: white;
+        color: var(--text_color_title);
         gap:1px;
 
         .pt1 {margin-left: 16px; display: flex; font-weight: 500;}
@@ -154,14 +212,14 @@ a,p,li,ol {
         }
 
         .tbody {
-            background-color:  rgb(17, 16, 18);;
+            background-color:  var(--color_mode);
             padding: 7px;
         }
     }
 }
 
 strong {
-    color: white;
+    color: var(--text_color_title);
 }
 
 $mobile_size: 1000px;
@@ -173,35 +231,36 @@ $mobile_factor: 1;
 }
 
 #mainParent {
-    background-color: rgb(46, 46, 46);
+    // background-color: rgb(46, 46, 46);
     height: fit-content;
     width: 10vw;
     // position: relative;
     #header {
-        background-color: rgb(17, 16, 18);;
+        background-color: var(--color_mode);
         display: flex;
         align-items: center;
         justify-content:space-between;
 
         position: fixed;
-        z-index: 1;
+        z-index: 2;
         height: 50px;
         width: 100vw;
         top: 0; left: 0;
-        border: 2px solid rgb(46, 46, 46);
+        border: 2px solid var(--color_contrast);
         #logo-box {
             background-color: transparent;
             display: flex;
             align-items: center; 
             justify-content: start;
             padding-left:10px;
-            color:white;
+            color: var(--text_color_title);
             img {
                 border: 1px solid rgb(202, 91, 242);
-                border: 3px solid #872341;
+                border: 3px solid var(--color_logo);
                 border-radius: 8px;
-                height:40px;
-                margin-right:3px;
+                height:30px;
+                margin-left: 10px;
+                margin-right: 3px;
             }
             flex-basis: 24%;
         }
@@ -213,11 +272,11 @@ $mobile_factor: 1;
             display: flex;
             align-items: center;
             justify-content: start;
-
+            visibility: hidden;
             input {
                 padding-left: 8px;
                 padding-block: 4px;
-                font-size: 16px;
+                font-size: $font_sub_title;
                 width:45%;
                 border: 1px solid #888;
                 border-radius: 8px;
@@ -239,10 +298,15 @@ $mobile_factor: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-right: 20px;
+            svg {
+                color: var(--text_color_title);
+                height: 22px;
+            }
         }
     }
     #sidebar {
-        background-color: rgb(18, 17, 19);
+        background-color: var(--color_mode);
 
         position: fixed;
         z-index: 1;
@@ -254,9 +318,9 @@ $mobile_factor: 1;
         align-items: start;
         justify-content: start;
         padding-top: 12px;
-        font-size: 14px;
+        font-size: $font_sidebar;
         
-        border: 2px solid rgb(46, 46, 46);
+        border: 2px solid var(--color_contrast);
         a, strong {
             padding: 7px;
             padding-inline: 22px;
@@ -267,7 +331,7 @@ $mobile_factor: 1;
         }
     }
     #content {
-        background-color: rgb(18, 17, 19);
+        background-color: var(--color_mode);
         
         position: absolute;
         width: 100vw;
@@ -281,7 +345,7 @@ $mobile_factor: 1;
         // border: 2px solid rgb(46, 46, 46);
         overflow: auto;
         .bullets1 {
-            font-size: 16px;
+            font-size: $font_paragraph;
         }
     }
 }
