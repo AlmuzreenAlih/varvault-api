@@ -1,0 +1,52 @@
+<section class="content">
+    <p><strong class="title">Basics</strong>
+        <!-- <img class="sideimage" src="nodelogo.png" alt=""> -->
+    </p>
+    <p class="paragraph">This guide will help you get started with using the Varvault API to store and manage variables for your user interface applications and embedded board devices such as NodeMCU, Raspberry pi or Arduino.</p>
+    <section class="pageimage"><img src="http.png" alt=""></section>
+
+    <p><strong class="sub-title">Quick Guide</strong></p>
+    <ol>
+        <li><strong>Register: </strong> (See the API Method <a class="link" href="/register">Registering)</a>
+            <p>Provide a username and a password. These credentials will be used to add future variables to your account and to delete them.</p>
+        </li>
+
+        <li><strong>Generate Token: </strong> (See the API Method <a class="link" href="/generate-token">Generating a token)</a>
+            <p>Use your registered username and password to generate a token that will expire in 30 days. The token will
+                be used to authenticate your requests to update your variable values.
+            </p>
+        </li>
+
+        <li><strong>Add a variable: </strong> (See the API Method <a class="link" href="/add-variable">Adding a variable)</a>
+            <p>Use your registered username and password to add a variable name (i.e. Temperature) and its any first value.
+            </p>
+        </li>
+
+        <li><strong>Update the variable: </strong> (See the API Method <a class="link" href="/update-variable">Updating a variable)</a>
+            <p>Use your generated token to update the variable you just created. This endpoint is usually the one that you will
+                put in your embedded board devices. (See our <a class="link" href="/https-arduino">Tutorials)</a>
+            </p>
+        </li>
+    </ol>
+    <br>
+    <p><strong class="sub-title">All VarVault API's Endpoints:</strong></p>
+    <ol>
+        <li><p><strong>User Management</strong></p>
+            <ul>
+                <li class="bullets1"><strong>`/register`</strong> : Register a new user account.</li>
+                <li class="bullets1"><strong>`/gen-token`</strong> : Generate an authentication token for an existing user.</li>
+            </ul>
+        </li>
+
+        <li><p><strong>Variable Management</strong></p>
+            <ul>
+                <li class="bullets1"><strong>`/add-variable`</strong>               : Add a new variable for the authenticated user.</li>
+                <li class="bullets1"><strong>`/add-variable-viatoken`</strong>      : Add a new variable using a generated token.</li>
+                <li class="bullets1"><strong>`/update-variable-viatoken`</strong>   : Update an existing variable using a token.</li>
+                <li class="bullets1"><strong>`/delete-variable`</strong>            : Delete a variable associated with the authenticated user.</li>
+                <li class="bullets1"><strong>`/read-variable`</strong>              : Read the value of a specific variable.</li>
+                <li class="bullets1"><strong>`/read-variables/:format`</strong>     : Read all variables associated with the authenticated user in a specified format.</li>
+            </ul>
+        </li>
+    </ol>
+</section>

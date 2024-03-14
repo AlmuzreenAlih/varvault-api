@@ -130,7 +130,7 @@ $mobile_factor: 1;
     }
 }
 
-#mainParent {
+#root {
     #header {
         background-color: var(--color_mode);
         display: flex;
@@ -346,7 +346,7 @@ $mobile_factor: 1;
                     padding: 7px;
                 }
             }
-            .sideImage {
+            .sideimage {
                 margin-left: 5px;
                 position: absolute;
                 top: 50%;
@@ -355,14 +355,14 @@ $mobile_factor: 1;
                 // background: #00A67D;
             }
         
-            .pageImage {
+            .pageimage {
                 background-color: transparent;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
         
-                margin: auto;
+                margin-inline: auto;
                 width:50vw;
                 img {
                     margin-inline: auto;

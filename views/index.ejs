@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="mainParent" class="">
+    <div id="root" class="">
         <article id="header">
             <section id="logo-box">
                 <img src="logo.png" alt="">
@@ -36,7 +36,7 @@
         <article id="sidebar">
             <strong>Getting Started</strong>
             <a href="/"                     class="<%= activeTab === 'ovrv' ? 'active' : '' %>">Overview</a>
-            <a href="/https-arduino"        class="<%= activeTab === 'quic' ? 'active' : '' %>">Quick Start</a>
+            <a href="/quick-start"          class="<%= activeTab === 'quic' ? 'active' : '' %>">Basics</a>
             
             <strong>API Methods</strong>
             <a href="/register"             class="<%= activeTab === 'regi' ? 'active' : '' %>">Registering</a>
@@ -63,6 +63,10 @@
             
             <% if (activeTab === 'ardu') { %>
                 <%- include('httpsarduino') %>
+            <% } %>
+
+            <% if (activeTab === 'quic') { %>
+                <%- include('quickstart') %>
             <% } %>
         </article>
     </div>

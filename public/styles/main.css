@@ -101,7 +101,7 @@ strong {
   color: var(--text_color_title);
 }
 
-#mainParent #header {
+#root #header {
   background-color: var(--color_mode);
   display: flex;
   align-items: center;
@@ -114,7 +114,7 @@ strong {
   left: 0;
   border: 2px solid var(--color_contrast);
 }
-#mainParent #header #logo-box {
+#root #header #logo-box {
   background-color: transparent;
   display: flex;
   align-items: center;
@@ -123,7 +123,7 @@ strong {
   color: var(--text_color_title);
   flex-basis: 24%;
 }
-#mainParent #header #logo-box img {
+#root #header #logo-box img {
   border: 1px solid rgb(202, 91, 242);
   border: 3px solid var(--color_logo);
   border-radius: 8px;
@@ -131,7 +131,7 @@ strong {
   margin-left: 10px;
   margin-right: 3px;
 }
-#mainParent #header #search {
+#root #header #search {
   flex-basis: 66%;
   background-color: transparent;
   display: flex;
@@ -139,7 +139,7 @@ strong {
   justify-content: start;
   visibility: hidden;
 }
-#mainParent #header #search input {
+#root #header #search input {
   padding-left: 8px;
   padding-block: 4px;
   font-size: 1.25rem;
@@ -148,7 +148,7 @@ strong {
   border-radius: 8px;
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
 }
-#mainParent #header #dark-mode-box {
+#root #header #dark-mode-box {
   background-color: yellow;
   flex-basis: 5%;
   background-color: transparent;
@@ -156,7 +156,7 @@ strong {
   align-items: center;
   justify-content: center;
 }
-#mainParent #header #github-box {
+#root #header #github-box {
   background-color: red;
   flex-basis: 5%;
   background-color: transparent;
@@ -165,11 +165,11 @@ strong {
   justify-content: center;
   margin-right: 20px;
 }
-#mainParent #header #github-box svg {
+#root #header #github-box svg {
   color: var(--text_color_title);
   height: 22px;
 }
-#mainParent #sidebar {
+#root #sidebar {
   background-color: var(--color_mode);
   position: fixed;
   z-index: 1;
@@ -186,17 +186,17 @@ strong {
   border: 2px solid var(--color_contrast);
   overflow: auto;
 }
-#mainParent #sidebar strong {
+#root #sidebar strong {
   margin-top: 5px;
   padding: 7px;
   padding-inline: 25px;
 }
-#mainParent #sidebar a {
+#root #sidebar a {
   width: 100%;
   padding: 7px;
   padding-inline: 25px;
 }
-#mainParent #content {
+#root #content {
   background-color: var(--color_mode);
   position: absolute;
   width: 100%;
@@ -210,38 +210,38 @@ strong {
   justify-content: start;
   overflow: auto;
 }
-#mainParent #content .content {
+#root #content .content {
   padding-inline: 75px;
   padding-top: 50px;
 }
-#mainParent #content .content .title {
+#root #content .content .title {
   font-size: 1.875rem;
 }
-#mainParent #content .content .sub-title {
+#root #content .content .sub-title {
   font-size: 1.25rem;
 }
-#mainParent #content .content .paragraph {
+#root #content .content .paragraph {
   font-size: 1rem;
 }
-#mainParent #content .content .bullets1 {
+#root #content .content .bullets1 {
   font-size: 1rem;
 }
-#mainParent #content .content p, #mainParent #content .content li, #mainParent #content .content ol, #mainParent #content .content section, #mainParent #content .content i {
+#root #content .content p, #root #content .content li, #root #content .content ol, #root #content .content section, #root #content .content i {
   margin-bottom: 15px;
 }
-#mainParent #content .content .linkpost {
+#root #content .content .linkpost {
   border: 4px solid var(--color_post);
 }
-#mainParent #content .content section.httplink:hover {
+#root #content .content section.httplink:hover {
   box-shadow: 0px 0px 20px var(--color_post2);
   cursor: pointer;
 }
-#mainParent #content .content .httplink {
+#root #content .content .httplink {
   background-color: transparent;
   border-radius: 8px;
   position: relative;
 }
-#mainParent #content .content .httplink .httplinkbody {
+#root #content .content .httplink .httplinkbody {
   background-color: transparent;
   display: flex;
   align-items: center;
@@ -249,7 +249,7 @@ strong {
   color: var(--text_color_title);
   padding: 2px;
 }
-#mainParent #content .content .httplink .httplinkbody div:nth-child(1) {
+#root #content .content .httplink .httplinkbody div:nth-child(1) {
   background-color: var(--color_post);
   color: var(--color_mode);
   padding: 3px;
@@ -258,7 +258,7 @@ strong {
   font-weight: 700;
   margin-right: 5px;
 }
-#mainParent #content .content .httplink .httplinkbody div:nth-child(3) {
+#root #content .content .httplink .httplinkbody div:nth-child(3) {
   position: absolute;
   right: 5px;
   top: 62%;
@@ -267,7 +267,7 @@ strong {
   color: var(--color_post);
   margin-left: 5px;
 }
-#mainParent #content .content .httppost {
+#root #content .content .httppost {
   font-size: 1.875rem;
   padding-inline: 4px;
   border: 3px solid var(--color_post);
@@ -275,13 +275,13 @@ strong {
   border-radius: 8px;
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
 }
-#mainParent #content .content .tc113 {
+#root #content .content .tc113 {
   grid-template-columns: 1fr 1fr 3fr;
 }
-#mainParent #content .content .tr111 {
+#root #content .content .tr111 {
   grid-template-rows: 1fr 1fr 1fr;
 }
-#mainParent #content .content .table {
+#root #content .content .table {
   display: grid;
   border-radius: 8px;
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
@@ -290,61 +290,61 @@ strong {
   color: var(--text_color_title);
   gap: 1px;
 }
-#mainParent #content .content .table .pt1 {
+#root #content .content .table .pt1 {
   margin-left: 16px;
   display: flex;
   font-weight: 500;
 }
-#mainParent #content .content .table .pt2 {
+#root #content .content .table .pt2 {
   margin-left: 32px;
   display: flex;
   font-weight: 500;
 }
-#mainParent #content .content .table .key {
+#root #content .content .table .key {
   color: #C82C6D;
   margin-right: 4px;
 }
-#mainParent #content .content .table .value {
+#root #content .content .table .value {
   color: #00A67D;
   margin-left: 8px;
 }
-#mainParent #content .content .table .thead {
+#root #content .content .table .thead {
   background-color: #494949;
   padding: 7px;
   font-weight: 700;
 }
-#mainParent #content .content .table .tbody {
+#root #content .content .table .tbody {
   background-color: var(--color_mode);
   padding: 7px;
 }
-#mainParent #content .content .sideImage {
+#root #content .content .sideimage {
   margin-left: 5px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   height: 100%;
 }
-#mainParent #content .content .pageImage {
+#root #content .content .pageimage {
   background-color: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: auto;
+  margin-inline: auto;
   width: 50vw;
 }
-#mainParent #content .content .pageImage img {
+#root #content .content .pageimage img {
   margin-inline: auto;
   width: 100%;
 }
-#mainParent #content .content .pageImage i {
+#root #content .content .pageimage i {
   color: var(--text_color_secondary);
 }
-#mainParent #content .content .link {
+#root #content .content .link {
   text-decoration: underline;
   text-decoration-color: var(--text_color_secondary);
 }
-#mainParent #content .content .codings {
+#root #content .content .codings {
   margin-inline: auto;
   background-color: var(--color_mode);
   display: flex;
@@ -359,17 +359,17 @@ strong {
   padding: 0;
   position: relative;
 }
-#mainParent #content .content .codings h1 {
+#root #content .content .codings h1 {
   font-size: 1rem;
   background-color: #494949;
   padding: 5px;
   width: 100%;
 }
-#mainParent #content .content .codings .code {
+#root #content .content .codings .code {
   width: 100%;
   overflow: auto;
 }
-#mainParent #content .content .codings .code pre {
+#root #content .content .codings .code pre {
   margin: 0;
   padding: 0 1.5rem 1.5rem 1.5rem;
   border: 0;
