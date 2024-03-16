@@ -29,5 +29,19 @@ $("section.httplink").on( "click", function() {
 });
 
 $("#dark-mode-box").on( "click", function() {
-  $("#mainParent").toggleClass("lightmode")
+  $("body").toggleClass("lightmode")
 });
+
+$(".copybutton").on( "click", function() {
+  var codeContent = $(this).parent().parent().children('.code').children('pre').children('code').html();
+  var plainTextContent = codeContent.replace(/<[^>]*>/g, '');
+
+  var tempTextArea = $("<textarea>");
+  $("body").append(tempTextArea);
+  tempTextArea.val(plainTextContent).select();
+  document.execCommand("copy");
+  tempTextArea.remove();
+  
+  showMessage();
+});
+

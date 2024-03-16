@@ -46,7 +46,8 @@ app.get("/:tab", async (req, res) => {
   
   else if (req.params.tab == "quick-start")       {res.render("index.ejs", { activeTab: "quic" });}
   
-  else if (req.params.tab == "https-arduino")     {res.render("index.ejs", { activeTab: "ardu" });}
+  else if (req.params.tab == "tuts-nodemcu")      {res.render("index.ejs", { activeTab: "node" });}
+  else if (req.params.tab == "tuts-rasperry-pi")  {res.render("index.ejs", { activeTab: "rasp" });}
 });
 
 app.get("/", async (req, res) => {

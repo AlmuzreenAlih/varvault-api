@@ -1,0 +1,87 @@
+<section class="content">
+    <p><strong class="title">Using VarVault with Raspberry Pi 
+            <img class="sideimage" src="https://cdn.worldvectorlogo.com/logos/raspberry-pi.svg" alt="">
+        </strong>
+    </p>
+    <p class="paragraph">
+        Using sensors with a Raspberry Pi can be a rewarding way to explore physical computing and build various projects, from
+        environmental monitoring to home automation. Once you have successfully interfaced with the sensor and processed the data, 
+        you can integrate it into your Raspberry Pi project. This might involve controlling other components based on sensor readings, 
+        sending data to a web server or cloud service, or triggering events based on sensor inputs.
+    </p>
+    <div class="pageimage">
+        <img src="https://diyprojectslab.com/wp-content/uploads/2022/11/ds18b20-temperature-sensor-with-raspberry-pi-pico-using-micropython-1-scaled.jpeg" alt="">
+        <i>DS18b20 (temperature sensor) connected to a Raspberry Pi</i>
+    </div>
+
+    <p><strong class="sub-title">Python Programming Language</strong></p>
+
+    <p class="paragraph">
+        Python programming language is the go-to programming language in developing raspberry pi projects. It has abundant libraries, 
+        community support, and ease of integration with the Raspberry Pi hardware that makes it an excellent choice for your projects, 
+        where interacting with sensors, actuators, and other peripherals is common.
+    
+    <p><strong class="sub-title">Performing POST Requests in python</strong></p>
+    <p class="paragraph">
+        To perform GET and POST requests in Python on a Raspberry Pi, you can use the requests library, which is a simple and 
+        elegant HTTP library for Python. Here's some of the few examples of how to use it:
+    </p>
+    <section class="codings noMarginBottom">
+        <h1>python 
+            <i class="copybutton material-symbols-outlined pointer tooltip">content_copy
+                <span>Copy Code</span>
+            </i>
+        </h1>
+        <span class="code">
+            <pre class="">
+                <code class="language-py">
+import requests
+
+session1 = requests.session()
+try:
+    payload = {'token': '500fbhajgccfei', 
+               'variable_name': 'temperature'}
+    response = session1.post(
+               'https://www.varvault.com/read-variable', 
+               json=payload, timeout = 1)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+    data = response.json()
+
+    print(data['temperature'])
+except Exception as e:
+    print("Error:", e)  # Print the error message
+finally:
+    session1.close()  # Close the session regardless of the outcome</code></pre>
+        </span>
+    </section>
+    <i class="info">POST request to this API's endpoint `/read-variable`</i>
+
+    <section class="codings noMarginBottom">
+        <h1>python 
+            <i class="copybutton material-symbols-outlined pointer tooltip">content_copy
+                <span>Copy Code</span>
+            </i>
+        </h1>
+        <span class="code">
+            <pre class="">
+                <code class="language-py">
+import requests
+
+session1 = requests.session()
+try:
+    payload = {'token': '500fbhajgccfei', 
+               'variable_name': 'temperature'
+               'value': '37.8'} #Update the temperature to 37.8
+    response = session1.post(
+               'https://www.varvault.com/update-variable', 
+               json=payload, timeout = 1)
+    response.raise_for_status()  # Raise an exception for HTTP errors
+
+except Exception as e:
+    print("Error:", e)  # Print the error message
+finally:
+    session1.close()  # Close the session regardless of the outcome</code></pre>
+        </span>
+    </section>
+    <i class="info">POST request to this API's endpoint `/update-variable`</i>
+</section>

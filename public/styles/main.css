@@ -14,12 +14,14 @@ html {
   --color_theme1: #22092C;
   --color_theme2: #61197d;
   --color_mode: rgb(17, 16, 18);
+  --color_code: rgb(17, 16, 18);
   --color_contrast: rgb(40, 40, 40);
   --color_logo: #872341;
   --text_color_title: white;
   --text_color_secondary: rgb(189, 184, 184);
   --color_post: #68D696;
   --color_post2: rgba(58, 185, 111, 0.75);
+  --color_headers: #494948;
   --moon_visibility: visible;
   --sun_visibility: hidden;
 }
@@ -28,6 +30,7 @@ html {
   --color_theme1: #c587dd;
   --color_theme2: #61197d;
   --color_mode: white;
+  --color_code: rgb(49, 49, 49);
   --color_contrast: rgb(190, 190, 190);
   --text_color_title: black;
   --text_color_secondary: rgb(70,70,70);
@@ -54,6 +57,7 @@ html {
 
 strong {
   font-weight: 600;
+  color: var(--text_color_title);
 }
 
 ul, ol {
@@ -93,12 +97,8 @@ svg {
   height: 100%;
 }
 
-p {
-  position: relative;
-}
-
-strong {
-  color: var(--text_color_title);
+body {
+  background-color: var(--color_mode);
 }
 
 #root #header {
@@ -198,7 +198,7 @@ strong {
 }
 #root #content {
   background-color: var(--color_mode);
-  position: absolute;
+  position: relative;
   width: 100%;
   top: 0;
   left: 0;
@@ -213,6 +213,11 @@ strong {
 #root #content .content {
   padding-inline: 75px;
   padding-top: 50px;
+  position: relative;
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
 }
 #root #content .content .title {
   font-size: 1.875rem;
@@ -239,7 +244,7 @@ strong {
 #root #content .content .httplink {
   background-color: transparent;
   border-radius: 8px;
-  position: relative;
+  width: 100%;
 }
 #root #content .content .httplink .httplinkbody {
   background-color: transparent;
@@ -248,6 +253,7 @@ strong {
   justify-content: start;
   color: var(--text_color_title);
   padding: 2px;
+  position: relative;
 }
 #root #content .content .httplink .httplinkbody div:nth-child(1) {
   background-color: var(--color_post);
@@ -258,14 +264,16 @@ strong {
   font-weight: 700;
   margin-right: 5px;
 }
-#root #content .content .httplink .httplinkbody div:nth-child(3) {
+#root #content .content .httplink .httplinkbody .copy {
   position: absolute;
   right: 5px;
-  top: 62%;
+  top: 0;
   height: 100%;
-  transform: translateY(-50%);
   color: var(--color_post);
-  margin-left: 5px;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #root #content .content .httppost {
   font-size: 1.875rem;
@@ -309,7 +317,7 @@ strong {
   margin-left: 8px;
 }
 #root #content .content .table .thead {
-  background-color: #494949;
+  background-color: var(--color_headers);
   padding: 7px;
   font-weight: 700;
 }
@@ -319,10 +327,8 @@ strong {
 }
 #root #content .content .sideimage {
   margin-left: 5px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 100%;
+  transform: translateY(10%);
+  height: 1.875rem;
 }
 #root #content .content .pageimage {
   background-color: transparent;
@@ -339,6 +345,16 @@ strong {
 }
 #root #content .content .pageimage i {
   color: var(--text_color_secondary);
+  text-align: center;
+}
+#root #content .content .info {
+  width: 100%;
+  color: var(--text_color_secondary);
+  text-align: center;
+  margin-top: 4px;
+}
+#root #content .content .noMarginBottom {
+  margin-bottom: 0 !important;
 }
 #root #content .content .link {
   text-decoration: underline;
@@ -361,9 +377,25 @@ strong {
 }
 #root #content .content .codings h1 {
   font-size: 1rem;
-  background-color: #494949;
+  background-color: var(--color_headers);
   padding: 5px;
   width: 100%;
+  position: relative;
+}
+#root #content .content .codings h1 .copybutton {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  font-size: 1.25rem;
+  height: 100%;
+  width: -moz-fit-content;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#root #content .content .codings h1 .copybutton span {
+  font-size: 0.875rem;
 }
 #root #content .content .codings .code {
   width: 100%;
@@ -375,4 +407,5 @@ strong {
   border: 0;
   border-radius: 0;
   overflow: auto;
+  background-color: var(--color_code);
 }/*# sourceMappingURL=main.css.map */
