@@ -1,14 +1,5 @@
-import pg from "pg";
 import TokenGenerator from 'token-generator';
-
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DB,
-  password: process.env.PG_PW,
-  port: process.env.PG_PORT,
-});
-db.connect();
+import db from '../configuration/dbConfig.js'
 
 const tokenGenerator = new TokenGenerator({
   salt: 'your secret ingredient for this magic recipe.',

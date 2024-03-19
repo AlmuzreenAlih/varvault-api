@@ -213,7 +213,6 @@ body {
 #root #content .content {
   padding-inline: 75px;
   padding-top: 50px;
-  position: relative;
   display: flex;
   align-items: start;
   justify-content: start;
@@ -337,7 +336,7 @@ body {
   align-items: center;
   justify-content: center;
   margin-inline: auto;
-  width: 50vw;
+  width: 70%;
 }
 #root #content .content .pageimage img {
   margin-inline: auto;

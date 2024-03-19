@@ -1,0 +1,10 @@
+# git add . && git commit -mm "Add NodeMCU tutorial page to the API Documentation" && git pushh
+hash.js
+node_modules/
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
