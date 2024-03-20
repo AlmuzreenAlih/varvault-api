@@ -285,6 +285,9 @@ body {
 #root #content .content .tc113 {
   grid-template-columns: 1fr 1fr 3fr;
 }
+#root #content .content .tc23 {
+  grid-template-columns: 1fr 3fr;
+}
 #root #content .content .tr111 {
   grid-template-rows: 1fr 1fr 1fr;
 }
@@ -296,16 +299,19 @@ body {
   overflow: hidden;
   color: var(--text_color_title);
   gap: 1px;
+  margin-bottom: 1.5rem;
 }
 #root #content .content .table .pt1 {
   margin-left: 16px;
   display: flex;
   font-weight: 500;
+  margin-bottom: 8px;
 }
 #root #content .content .table .pt2 {
   margin-left: 32px;
   display: flex;
   font-weight: 500;
+  margin-bottom: 8px;
 }
 #root #content .content .table .key {
   color: #C82C6D;
@@ -354,6 +360,9 @@ body {
 }
 #root #content .content .noMarginBottom {
   margin-bottom: 0 !important;
+}
+#root #content .content .small-title {
+  margin-bottom: 16px;
 }
 #root #content .content .link {
   text-decoration: underline;

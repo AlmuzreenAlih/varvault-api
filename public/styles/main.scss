@@ -323,6 +323,7 @@ body {
             }
         
             .tc113 {grid-template-columns: 1fr 1fr 3fr;}
+            .tc23 {grid-template-columns: 1fr 3fr;}
             .tr111 {grid-template-rows: 1fr 1fr 1fr;}
             .table {
                 // background-color: white;
@@ -335,9 +336,10 @@ body {
                 overflow: hidden;
                 color: var(--text_color_title);
                 gap:1px;
-        
-                .pt1 {margin-left: 16px; display: flex; font-weight: 500;}
-                .pt2 {margin-left: 32px; display: flex; font-weight: 500;}
+                margin-bottom: 1.5rem;
+
+                .pt1 {margin-left: 16px; display: flex; font-weight: 500; margin-bottom: 8px;}
+                .pt2 {margin-left: 32px; display: flex; font-weight: 500; margin-bottom: 8px;}
                 .key {color: #C82C6D;margin-right: 4px;}
                 .value {color: #00A67D; margin-left: 8px;}
         
@@ -386,6 +388,9 @@ body {
             }
             .noMarginBottom {
                 margin-bottom: 0 !important;
+            }
+            .small-title {
+                margin-bottom: 16px;
             }
             .link {
                 text-decoration: underline;

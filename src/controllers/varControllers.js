@@ -3,8 +3,15 @@ import * as HASH from '../../hash.js'; //git ignored
 import * as SCHEMA from '../../schema.js';
 
 export async function addVariable(req, res) {
-  const username        =   req.body.username;
-  const password        =   req.body.password;
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const encodedCredentials = authHeader.split(' ')[1];
+  const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('utf-8');
+  const [username, password] = decodedCredentials.split(':');
+
   const variable_name   =   req.body.variable_name;
   const value           =   req.body.value;
   let variable_type     =   req.body.variable_type;
@@ -17,7 +24,7 @@ export async function addVariable(req, res) {
     if (variable_name === undefined) {nullVars.push("variable_name");}
     if (value         === undefined) {nullVars.push("value");}
 
-    return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
+    return res.status(409).json({ error: "These fields must be specified: " + nullVars.join(',') });
   }
 
   if (variable_type) {

@@ -36,11 +36,11 @@
         <article id="sidebar">
             <strong>Getting Started</strong>
             <a href="/"                     class="<%= activeTab === 'ovrv' ? 'active' : '' %>">Overview</a>
-            <a href="/quick-start"          class="<%= activeTab === 'quic' ? 'active' : '' %>">Basics</a>
+            <a href="/basics"               class="<%= activeTab === 'basi' ? 'active' : '' %>">Basics</a>
             
             <strong>API Methods</strong>
-            <a href="/register"             class="<%= activeTab === 'regi' ? 'active' : '' %>">Registering</a>
-            <a href="/generate-token"       class="<%= activeTab === 'gene' ? 'active' : '' %>">Generating a token</a>
+            <a href="/register"             class="<%= activeTab === 'regi' ? 'active' : '' %>">Registration</a>
+            <a href="/generate-token"       class="<%= activeTab === 'gene' ? 'active' : '' %>">Token Generation</a>
             <a href="/add-variable"         class="<%= activeTab === 'addv' ? 'active' : '' %>">Adding a variable</a>
             <a href="/update-variable"      class="<%= activeTab === 'upda' ? 'active' : '' %>">Updating a variable</a>
             <a href="/delete-variable"      class="<%= activeTab === 'dele' ? 'active' : '' %>">Deleting a variable</a>
@@ -54,23 +54,31 @@
         </article>
         <article id="content">
             <% if (activeTab === 'ovrv') { %>
-                <%- include('overview') %>
+                <%- include('GettingStarted/overview') %>
             <% } %>
 
             <% if (activeTab === 'regi') { %>
-                <%- include('register') %>
+                <%- include('APIMethods/registration') %>
+            <% } %>
+
+            <% if (activeTab === 'gene') { %>
+                <%- include('APIMethods/tokengeneration') %>
+            <% } %>
+
+            <% if (activeTab === 'addv') { %>
+                <%- include('APIMethods/addingavariable') %>
             <% } %>
             
             <% if (activeTab === 'node') { %>
-                <%- include('tutsnodemcu') %>
+                <%- include('Tutorials/tutorialsnodemcu') %>
             <% } %>
 
             <% if (activeTab === 'rasp') { %>
-                <%- include('tutsrasp') %>
+                <%- include('Tutorials/tutorialsrasperrypi') %>
             <% } %>
 
-            <% if (activeTab === 'quic') { %>
-                <%- include('quickstart') %>
+            <% if (activeTab === 'basi') { %>
+                <%- include('GettingStarted/basics') %>
             <% } %>
         </article>
     </div>

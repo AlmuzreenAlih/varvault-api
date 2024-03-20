@@ -1,5 +1,5 @@
 import * as MODEL from '../models.js';
-import * as HASH from '../../hash.js';
+import * as HASH from '../../hash.js'; //git ignored
 import * as SCHEMA from '../../schema.js';
 
 export async function register(req, res) {
@@ -34,8 +34,14 @@ export async function register(req, res) {
 }
 
 export async function genToken(req, res) {
-  const username        =   req.body.username;
-  const password_input  =   req.body.password;
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const encodedCredentials = authHeader.split(' ')[1];
+  const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('utf-8');
+  const [username, password_input] = decodedCredentials.split(':');
 
   // Check if username is in the database
   const stored_user = await MODEL.selectUserByUsername(username);
