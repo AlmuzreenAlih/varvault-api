@@ -7,6 +7,7 @@ const userpwSchema = vine.object({
   password: vine.string()
                 .minLength(8)
                 .maxLength(32)
+                .notSameAs('username')
 });
 
 export function validateUserData(username, password) {

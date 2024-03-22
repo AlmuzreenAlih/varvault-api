@@ -1,46 +1,38 @@
 <section class="content">
-    <p><strong class="title">Add Variable Endpoint </strong><strong class="httppost">POST</strong></p>
-    <p class="paragraph">Adds variables to your account by specifying its name, value and optionally the type and unit.</p>
+    <p><strong class="title">Update Variable Endpoint </strong><strong class="httpput">PUT</strong></p>
+    <p class="paragraph">Updates the users' variables by using the generated token.</p>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <section class="httplink linkpost">
+    <section class="httplink linkput">
         <span class="httplinkbody">
-            <div>POST</div>
-            <div>www.varvault.com/var/add</div>
-            <i class="material-icons copy">content_copy</i>
+            <div>PUT</div>
+            <div>www.varvault.com/var/update-viatoken</div>
+            <i class="material-icons copy putt">content_copy</i>
         </span>
         
     </section>
     
     <p><strong class="sub-title">Authorization Header</strong></p>
-    <p class="paragraph">This endpoint uses Basic Authentication for username and password</p>
+    <p class="paragraph">This endpoint uses Bearer Authentication for the variable updating.</p>
 
-    <section class="table tc23">
+    <section class="table tc23 tr11">
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
-        <div class="tbody">username</div>
-        <div class="tbody">The registered username of the account.</div>
-        <div class="tbody">password</div>
-        <div class="tbody">The registered password of the account.</div>
+        <div class="tbody">Bearer</div>
+        <div class="tbody">The user's generated token</div>
     </section>
 
     <p><strong class="sub-title">Request Body Parameters</strong></p>
-    <section class="table tc23">
+    <section class="table tc23 tr111">
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
         <div class="tbody">variable_name</div>
-        <div class="tbody">The name the user want to call their variable</div>
+        <div class="tbody">The name of their saved variable</div>
         <div class="tbody">value</div>
         <div class="tbody">The initial value of the variable</div>
-
-        <div class="tbody">variable_type *</div>
-        <div class="tbody">The variable type if numeric (default), boolean or text</div>
-
-        <div class="tbody">unit *</div>
-        <div class="tbody">The unit of the variable (i.e. Celcius, Pa, °F)</div>
     </section>
-    <p class="right"><i>* optional</i></p>
+
     <p><strong class="sub-title">Responses</strong></p>
-    <strong class="small-title">Successful Variable Adding</strong>
+    <strong class="small-title">Successful Variable Updating</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -49,14 +41,14 @@
         <div class="thead">json</div>
         <div class="tbody">
             <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Variable is added"</div>,</div>
+                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Variable is updated."</div>,</div>
                 <div class="pt2"> <div class="key">"variable"</div> : <div class="value">"[variable]."</div>,</div>
                 <div class="pt2"> <div class="key">"value"</div> : <div class="value">"[value]"</div></div>
             <div class="pt1">}</div>   
         </div>
     </section>
     
-    <strong class="small-title">Unauthorized/Wrong Username or Password</strong>
+    <strong class="small-title">Unauthorized/Token Not Found</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 401 Error </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -65,7 +57,7 @@
         <div class="thead">json</div>
         <div class="tbody">
             <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Unauthorized: Username and password should be specified"</div></div>
+                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Unauthorized: token should be specified"</div></div>
             <div class="pt1">}</div>   
         </div>
     </section>
@@ -74,7 +66,7 @@
         <div class="thead">json</div>
         <div class="tbody">
             <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Wrong username/password"</div></div>
+                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Token not found"</div></div>
             <div class="pt1">}</div>   
         </div>
     </section>
@@ -101,4 +93,5 @@
             <div class="pt1">}</div>   
         </div>
     </section>
+
 </section>

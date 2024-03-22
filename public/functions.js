@@ -23,11 +23,6 @@ function showMessage() {
   }, 3000);
 }
 
-$("section.httplink").on( "click", function() {
-  copyToClipboard("http://www.varvault.com/register");
-  showMessage();
-});
-
 $("#dark-mode-box").on( "click", function() {
   $("body").toggleClass("lightmode")
 });
@@ -36,12 +31,14 @@ $(".copybutton").on( "click", function() {
   var codeContent = $(this).parent().parent().children('.code').children('pre').children('code').html();
   var plainTextContent = codeContent.replace(/<[^>]*>/g, '');
 
-  var tempTextArea = $("<textarea>");
-  $("body").append(tempTextArea);
-  tempTextArea.val(plainTextContent).select();
-  document.execCommand("copy");
-  tempTextArea.remove();
-  
+  copyToClipboard(plainTextContent);
   showMessage();
 });
 
+$(".httplink").on( "click", function() {
+  var linkContent = $(this).children('span').children('div:nth-child(2)').html();
+  var plainTextContent = linkContent.replace(/<[^>]*>/g, '');
+
+  copyToClipboard("https://"+plainTextContent);
+  showMessage();
+});

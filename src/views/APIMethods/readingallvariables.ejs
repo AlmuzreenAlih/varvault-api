@@ -1,0 +1,96 @@
+<section class="content">
+    <p><strong class="title">Read All Variables Endpoint </strong><strong class="httppost">POST</strong></p>
+    <p class="paragraph">Reads all the values of the users' variable in either of the two formats.</p>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <section class="httplink linkpost">
+        <span class="httplinkbody">
+            <div>POST</div>
+            <div>www.varvault.com/var/read-all/format1</div>
+            <i class="material-icons copy">content_copy</i>
+        </span>
+    </section>
+    
+    <section class="httplink linkpost">
+        <span class="httplinkbody">
+            <div>POST</div>
+            <div>www.varvault.com/var/read-all/format2</div>
+            <i class="material-icons copy">content_copy</i>
+        </span>
+    </section>
+    
+    <p><strong class="sub-title">Authorization Header</strong></p>
+    <p class="paragraph">This endpoint uses Bearer Authentication for the reading of the variable and its properties.</p>
+
+    <section class="table tc23 tr11">
+        <div class="thead">Parameter</div>
+        <div class="thead">Description</div>
+        <div class="tbody">Bearer</div>
+        <div class="tbody">The user's generated token</div>
+    </section>
+
+    <p><strong class="sub-title">Responses</strong></p>
+    <strong class="small-title">Successful Variable Reading</strong>
+    <ul>
+        <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
+        <li class="bullets1"><strong>Response Body (Sample):</strong></li>
+    </ul>
+    <section class="table">
+        <div class="thead">json (format1)</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"variables"</div> : <div class="openbracket">[</div></div>
+                <div class="pt3">&#123;</div>
+                <div class="pt4"> <div class="key">"variable_name"</div> : <div class="value">"Temperature"</div>,</div>
+                <div class="pt4"> <div class="key">"value"</div> : <div class="value">"36.7"</div>,</div>
+                <div class="pt4"> <div class="key">"unit"</div> : <div class="value">"Celcius"</div>,</div>
+                <div class="pt4"> <div class="key">"updated_at"</div> : <div class="value">"2024-03-21T04:37:47.981Z"</div></div>
+                <div class="pt3">&#125;,</div>
+
+                <div class="pt3">&#123;</div>
+                <div class="pt4"> <div class="key">"variable_name"</div> : <div class="value">"Temperature2"</div>,</div>
+                <div class="pt4"> <div class="key">"value"</div> : <div class="value">"37.7"</div>,</div>
+                <div class="pt4"> <div class="key">"unit"</div> : <div class="value">"Celcius"</div>,</div>
+                <div class="pt4"> <div class="key">"updated_at"</div> : <div class="value">"2024-03-21T04:37:47.981Z"</div></div>
+                <div class="pt3">&#125;</div>
+
+                <div class="pt2"> ]</div>
+            <div class="pt1">}</div>   
+        </div>
+    </section>
+
+    <section class="table">
+        <div class="thead">json (format2)</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"variables"</div> : &#123;</div>
+                <div class="pt4"> <div class="key">"Temperature"</div> : <div class="value">"36.7",</div></div>
+                <div class="pt4"> <div class="key">"Temperature2"</div> : <div class="value">"37.7"</div></div>
+        
+                <div class="pt2"> &#125;</div>
+                <div class="pt1">}</div>    
+        </div>
+    </section>
+    
+    <strong class="small-title">Unauthorized/Token Not Found</strong>
+    <ul>
+        <li class="bullets1"><strong>Status Code:</strong> 401 Error </li>
+        <li class="bullets1"><strong>Response Body:</strong></li>
+    </ul>
+    <section class="table">
+        <div class="thead">json</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Unauthorized: Token should be specified"</div></div>
+            <div class="pt1">}</div>   
+        </div>
+    </section>
+
+    <section class="table">
+        <div class="thead">json</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Token not found"</div></div>
+            <div class="pt1">}</div>   
+        </div>
+    </section>
+</section>

@@ -47,6 +47,9 @@ $light_theme: true !default;
 // --color_mode: black;
 --text_color_secondary: rgb(189, 184, 184);
 --color_post: #68D696;
+--color_put: #74AEF6;
+--color_delete: #F79A8E;
+
 --color_post2: rgba(58, 185, 111, 0.75);
 --color_headers: #494948;
 
@@ -230,6 +233,7 @@ body {
     }
     #content {
         background-color: var(--color_mode);
+        background-color: transparent;
         
         position: relative;
         width: 100%;
@@ -240,18 +244,20 @@ body {
         display: flex;
         align-items: start;
         justify-content: start;
+        flex-direction: column;
         // border: 2px solid rgb(46, 46, 46);
         overflow: auto;
         .content {
             // background-color: #00A67D;
             padding-inline: 75px;
             padding-top: 50px;
-            // position: relative;
+            position: relative;
 
             display: flex;
             align-items: start;
             justify-content: start;
             flex-direction: column;
+            width: 100%;
             .title {
                 font-size: $font_title;
             }
@@ -265,14 +271,20 @@ body {
             .bullets1 {
                 font-size: $font_paragraph;
             }
-        
+            .right {
+                width: 100%;
+                text-align: right;
+            }
             p,li,ol,section,i {
+                width: 100%;
                 margin-bottom: 15px;
             }
         
-            .linkpost { border: 4px solid var(--color_post); }
-            section.httplink:hover { box-shadow: 0px 0px 20px var(--color_post2); cursor: pointer; }
-        
+            
+            section.linkpost:hover { box-shadow: 0px 0px 20px var(--color_post2); cursor: pointer; }
+            section.linkput:hover { box-shadow: 0px 0px 20px var(--color_put); cursor: pointer; }
+            section.linkdelete:hover { box-shadow: 0px 0px 20px var(--color_delete); cursor: pointer; }
+            
             .httplink {
                 background-color: transparent;
                 border-radius: 8px;
@@ -287,7 +299,6 @@ body {
                     position: relative;
         
                     div:nth-child(1) {
-                        background-color: var(--color_post);
                         color: var(--color_mode);
         
                         padding:3px;
@@ -296,20 +307,39 @@ body {
                         font-weight: 700;
                         margin-right: 5px;
                     }
-        
+                    div:nth-child(2) {
+                        width: 100%;
+                    }
                     .copy {
-                        position: absolute;
-                        right: 5px;
-                        top: 0; height: 100%;
-                        color:var(--color_post);
-                        // background-color: #00A67D;
+                        width: 10%;
+                        margin-bottom: 0;
                         font-size: $font_sub_title;
-                        
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
+                        text-align: right;
+                        padding-right: 5px;
                         
                     }
+                }
+            }
+            .linkpost { 
+                border: 4px solid var(--color_post);
+                .httplinkbody {
+                    div:nth-child(1) {background-color: var(--color_post);}
+                    .copy {color:var(--color_post);}
+                }
+            }
+            .linkput { 
+                border: 4px solid var(--color_put);
+                .httplinkbody {
+                    div:nth-child(1) {background-color: var(--color_put);}
+                    .copy {color:var(--color_put);}
+                }
+            }
+
+            .linkdelete { 
+                border: 4px solid var(--color_delete);
+                .httplinkbody {
+                    div:nth-child(1) {background-color: var(--color_delete);}
+                    .copy {color:var(--color_delete);}
                 }
             }
             
@@ -321,10 +351,29 @@ body {
                 border-radius: 8px;
                 box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
             }
+
+            .httpput {
+                font-size: $font_title;
+                padding-inline:4px;
+                border: 3px solid var(--color_put);
+                color: var(--color_put);
+                border-radius: 8px;
+                box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
+            }
+
+            .httpdelete {
+                font-size: $font_title;
+                padding-inline:4px;
+                border: 3px solid var(--color_delete);
+                color: var(--color_delete);
+                border-radius: 8px;
+                box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
+            }
         
             .tc113 {grid-template-columns: 1fr 1fr 3fr;}
             .tc23 {grid-template-columns: 1fr 3fr;}
             .tr111 {grid-template-rows: 1fr 1fr 1fr;}
+            .tr11 {grid-template-rows: 1fr 1fr;}
             .table {
                 // background-color: white;
                 display: grid;
@@ -338,10 +387,13 @@ body {
                 gap:1px;
                 margin-bottom: 1.5rem;
 
-                .pt1 {margin-left: 16px; display: flex; font-weight: 500; margin-bottom: 8px;}
-                .pt2 {margin-left: 32px; display: flex; font-weight: 500; margin-bottom: 8px;}
+                .pt1 {margin-left: 1rem; display: flex; font-weight: 500; margin-bottom: 8px;}
+                .pt2 {margin-left: 2rem; display: flex; font-weight: 500; margin-bottom: 8px;}
+                .pt3 {margin-left: 3rem; display: flex; font-weight: 500; margin-bottom: 8px;}
+                .pt4 {margin-left: 4rem; display: flex; font-weight: 500; margin-bottom: 8px;}
                 .key {color: #C82C6D;margin-right: 4px;}
                 .value {color: #00A67D; margin-left: 8px;}
+                .openbracket {margin-left: 8px;}
         
                 .thead {
                     background-color: var(--color_headers);

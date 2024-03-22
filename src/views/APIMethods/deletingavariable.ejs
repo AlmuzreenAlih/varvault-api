@@ -1,11 +1,11 @@
 <section class="content">
-    <p><strong class="title">Add Variable Endpoint </strong><strong class="httppost">POST</strong></p>
-    <p class="paragraph">Adds variables to your account by specifying its name, value and optionally the type and unit.</p>
+    <p><strong class="title">Delete Variable Endpoint </strong><strong class="httpdelete">DELETE</strong></p>
+    <p class="paragraph">Deletes the users' variables added by the user.</p>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <section class="httplink linkpost">
+    <section class="httplink linkdelete">
         <span class="httplinkbody">
-            <div>POST</div>
-            <div>www.varvault.com/var/add</div>
+            <div>DELETE</div>
+            <div>www.varvault.com/var/delete</div>
             <i class="material-icons copy">content_copy</i>
         </span>
         
@@ -28,19 +28,11 @@
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
         <div class="tbody">variable_name</div>
-        <div class="tbody">The name the user want to call their variable</div>
-        <div class="tbody">value</div>
-        <div class="tbody">The initial value of the variable</div>
-
-        <div class="tbody">variable_type *</div>
-        <div class="tbody">The variable type if numeric (default), boolean or text</div>
-
-        <div class="tbody">unit *</div>
-        <div class="tbody">The unit of the variable (i.e. Celcius, Pa, °F)</div>
+        <div class="tbody">The name of the user's saved variable</div>
     </section>
-    <p class="right"><i>* optional</i></p>
+
     <p><strong class="sub-title">Responses</strong></p>
-    <strong class="small-title">Successful Variable Adding</strong>
+    <strong class="small-title">Successful Variable Deleting</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -49,14 +41,12 @@
         <div class="thead">json</div>
         <div class="tbody">
             <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Variable is added"</div>,</div>
-                <div class="pt2"> <div class="key">"variable"</div> : <div class="value">"[variable]."</div>,</div>
-                <div class="pt2"> <div class="key">"value"</div> : <div class="value">"[value]"</div></div>
+                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Variable [variable] is deleted"</div></div>
             <div class="pt1">}</div>   
         </div>
     </section>
     
-    <strong class="small-title">Unauthorized/Wrong Username or Password</strong>
+    <strong class="small-title">Unauthorized/Username or Password Not Found</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 401 Error </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -65,7 +55,7 @@
         <div class="thead">json</div>
         <div class="tbody">
             <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Unauthorized: Username and password should be specified"</div></div>
+                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Unauthorized: Specify username and password"</div></div>
             <div class="pt1">}</div>   
         </div>
     </section>
@@ -79,7 +69,7 @@
         </div>
     </section>
 
-    <strong class="small-title">Incomplete Input Parameters, Variable Value and Type mismatch.</strong>
+    <strong class="small-title">Variable Not Found</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 409 Conflict </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -88,16 +78,7 @@
         <div class="thead">json</div>
         <div class="tbody">
             <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"These fields must be specified: [incomplete fields]"</div></div>
-            <div class="pt1">}</div>   
-        </div>
-    </section>
-
-    <section class="table">
-        <div class="thead">json</div>
-        <div class="tbody">
-            <div class="pt1">{</div>
-                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Expected boolean"</div></div>
+                <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Variable name not found"</div></div>
             <div class="pt1">}</div>   
         </div>
     </section>

@@ -50,7 +50,7 @@
             <strong>Tutorials</strong>
             <a href="/tuts-nodemcu"         class="<%= activeTab === 'node' ? 'active' : '' %>">VarVault + NodeMCU</a>
             <a href="/tuts-rasperry-pi"     class="<%= activeTab === 'rasp' ? 'active' : '' %>">VarVault + Raspberry pi</a>
-            <a href="/https-b4A"            class="<%= activeTab === 'basi' ? 'active' : '' %>">VarVault + B4A</a>
+            <!-- <a href="/https-b4A"            class="<%= activeTab === 'basi' ? 'active' : '' %>">VarVault + B4A</a> -->
         </article>
         <article id="content">
             <% if (activeTab === 'ovrv') { %>
@@ -68,6 +68,22 @@
             <% if (activeTab === 'addv') { %>
                 <%- include('APIMethods/addingavariable') %>
             <% } %>
+
+            <% if (activeTab === 'upda') { %>
+                <%- include('APIMethods/updatingavariable') %>
+            <% } %>
+
+            <% if (activeTab === 'dele') { %>
+                <%- include('APIMethods/deletingavariable') %>
+            <% } %>
+
+            <% if (activeTab === 'read') { %>
+                <%- include('APIMethods/readingavariable') %>
+            <% } %>
+
+            <% if (activeTab === 'reaD') { %>
+                <%- include('APIMethods/readingallvariables') %>
+            <% } %>
             
             <% if (activeTab === 'node') { %>
                 <%- include('Tutorials/tutorialsnodemcu') %>
@@ -80,6 +96,7 @@
             <% if (activeTab === 'basi') { %>
                 <%- include('GettingStarted/basics') %>
             <% } %>
+            
         </article>
     </div>
     <p id="message" class="hidden">Copied to Clipboard</p>
