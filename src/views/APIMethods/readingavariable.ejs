@@ -1,11 +1,34 @@
 <section class="content">
     <p><strong class="title">Read A Variable Endpoint </strong><strong class="httppost">POST</strong></p>
     <p class="paragraph">Reads the value of the users' variable.</p>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <p><strong class="sub-title">Basic Authentication Endpoint </strong></p>
     <section class="httplink linkpost">
         <span class="httplinkbody">
             <div>POST</div>
             <div>www.varvault.com/var/read</div>
+            <i class="material-icons copy">content_copy</i>
+        </span>
+        
+    </section>
+    
+    <p><strong class="sub-title">Authorization Header</strong></p>
+    <p class="paragraph">This endpoint uses Basic Authentication Authentication for the reading of the variable and its properties.</p>
+
+    <section class="table tc23">
+        <div class="thead">Parameter</div>
+        <div class="thead">Description</div>
+        <div class="tbody">username</div>
+        <div class="tbody">The registered username of the account.</div>
+        <div class="tbody">password</div>
+        <div class="tbody">The registered password of the account.</div>
+    </section>
+
+    <p><strong class="sub-title">Bearer Token Authentication Endpoint </strong></p>
+    <section class="httplink linkpost">
+        <span class="httplinkbody">
+            <div>POST</div>
+            <div>www.varvault.com/var/read-viatoken</div>
             <i class="material-icons copy">content_copy</i>
         </span>
         
@@ -51,7 +74,7 @@
         </div>
     </section>
     
-    <strong class="small-title">Unauthorized/Token Not Found</strong>
+    <!-- <strong class="small-title">Unauthorized/Token Not Found</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 401 Error </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -86,5 +109,5 @@
                 <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Variable name not found"</div></div>
             <div class="pt1">}</div>   
         </div>
-    </section>
+    </section> -->
 </section>

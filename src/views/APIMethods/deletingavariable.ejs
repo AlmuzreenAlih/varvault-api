@@ -1,7 +1,8 @@
 <section class="content">
     <p><strong class="title">Delete Variable Endpoint </strong><strong class="httpdelete">DELETE</strong></p>
     <p class="paragraph">Deletes the users' variables added by the user.</p>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <p><strong class="sub-title">Basic Authentication Endpoint </strong></p>
     <section class="httplink linkdelete">
         <span class="httplinkbody">
             <div>DELETE</div>
@@ -12,7 +13,7 @@
     </section>
     
     <p><strong class="sub-title">Authorization Header</strong></p>
-    <p class="paragraph">This endpoint uses Basic Authentication for username and password</p>
+    <p class="paragraph">This endpoint uses Basic Authentication for username and password for variable deleting.</p>
 
     <section class="table tc23">
         <div class="thead">Parameter</div>
@@ -21,6 +22,26 @@
         <div class="tbody">The registered username of the account.</div>
         <div class="tbody">password</div>
         <div class="tbody">The registered password of the account.</div>
+    </section>
+
+    <p><strong class="sub-title">Bearer Token Authentication Endpoint </strong></p>
+    <section class="httplink linkdelete">
+        <span class="httplinkbody">
+            <div>DELETE</div>
+            <div>www.varvault.com/var/delete-viatoken</div>
+            <i class="material-icons copy">content_copy</i>
+        </span>
+        
+    </section>
+    
+    <p><strong class="sub-title">Authorization Header</strong></p>
+    <p class="paragraph">This endpoint uses Bearer Token Authentication for variable deleting.</p>
+
+    <section class="table tc23">
+        <div class="thead">Parameter</div>
+        <div class="thead">Description</div>
+        <div class="tbody">Bearer</div>
+        <div class="tbody">A user's generated token</div>
     </section>
 
     <p><strong class="sub-title">Request Body Parameters</strong></p>
@@ -46,7 +67,7 @@
         </div>
     </section>
     
-    <strong class="small-title">Unauthorized/Username or Password Not Found</strong>
+    <!-- <strong class="small-title">Unauthorized/Username or Password Not Found</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 401 Error </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -81,5 +102,5 @@
                 <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Variable name not found"</div></div>
             <div class="pt1">}</div>   
         </div>
-    </section>
+    </section> -->
 </section>

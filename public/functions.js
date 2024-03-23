@@ -24,7 +24,16 @@ function showMessage() {
 }
 
 $("#dark-mode-box").on( "click", function() {
-  $("body").toggleClass("lightmode")
+
+  if (docPageData.darkMode) {
+    $("body").addClass("lightmode");
+    docPageData.darkMode = false;
+  } else {
+    $("body").removeClass("lightmode");
+    docPageData.darkMode = true;
+  }
+
+  SaveDocPageData();
 });
 
 $(".copybutton").on( "click", function() {
@@ -42,3 +51,31 @@ $(".httplink").on( "click", function() {
   copyToClipboard("https://"+plainTextContent);
   showMessage();
 });
+var docPageData;
+function InitializeDocPage() {
+  if (!localStorage.getItem('docPageData')) {
+    docPageData = {
+      darkMode: true,
+      withDashboard: false
+    }
+    localStorage.setItem('docPageData', JSON.stringify(docPageData));
+  }
+
+  docPageData = localStorage.getItem('docPageData');
+  docPageData = JSON.parse(docPageData);
+}
+
+function SaveDocPageData() {
+  localStorage.setItem('docPageData', JSON.stringify(docPageData));  
+}
+
+$(document).ready(function() {
+    InitializeDocPage();
+
+    if (docPageData.darkMode) {
+      $("body").removeClass("lightmode");
+    } else {
+      $("body").addClass("lightmode");
+    }
+  }
+)

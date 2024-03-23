@@ -38,6 +38,8 @@ html {
   --text_color_secondary: rgb(70,70,70);
   --color_post: #3ab96f;
   --color_post2: rgba(58, 185, 111, 0.75);
+  --color_put: #3b6496;
+  --color_delete: #c46255;
   --moon_visibility: hidden;
   --sun_visibility: visible;
 }

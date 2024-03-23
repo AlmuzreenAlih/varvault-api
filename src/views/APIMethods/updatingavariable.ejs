@@ -1,7 +1,30 @@
 <section class="content">
     <p><strong class="title">Update Variable Endpoint </strong><strong class="httpput">PUT</strong></p>
     <p class="paragraph">Updates the users' variables by using the generated token.</p>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <p><strong class="sub-title">Basic Authentication Endpoint </strong></p>
+    <section class="httplink linkput">
+        <span class="httplinkbody">
+            <div>PUT</div>
+            <div>www.varvault.com/var/update</div>
+            <i class="material-icons copy putt">content_copy</i>
+        </span>
+        
+    </section>
+    
+    <p><strong class="sub-title">Authorization Header</strong></p>
+    <p class="paragraph">This endpoint uses Basic Authentication for username and password for the variable updating.</p>
+
+    <section class="table tc23">
+        <div class="thead">Parameter</div>
+        <div class="thead">Description</div>
+        <div class="tbody">username</div>
+        <div class="tbody">The registered username of the account.</div>
+        <div class="tbody">password</div>
+        <div class="tbody">The registered password of the account.</div>
+    </section>
+
+    <p><strong class="sub-title">Bearer Token Authentication Endpoint </strong></p>
     <section class="httplink linkput">
         <span class="httplinkbody">
             <div>PUT</div>
@@ -14,7 +37,7 @@
     <p><strong class="sub-title">Authorization Header</strong></p>
     <p class="paragraph">This endpoint uses Bearer Authentication for the variable updating.</p>
 
-    <section class="table tc23 tr11">
+    <section class="table tc23">
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
         <div class="tbody">Bearer</div>
@@ -22,7 +45,7 @@
     </section>
 
     <p><strong class="sub-title">Request Body Parameters</strong></p>
-    <section class="table tc23 tr111">
+    <section class="table tc23">
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
         <div class="tbody">variable_name</div>
@@ -31,7 +54,7 @@
         <div class="tbody">The initial value of the variable</div>
     </section>
 
-    <p><strong class="sub-title">Responses</strong></p>
+    <p><strong class="sub-title">Response</strong></p>
     <strong class="small-title">Successful Variable Updating</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
@@ -48,7 +71,7 @@
         </div>
     </section>
     
-    <strong class="small-title">Unauthorized/Token Not Found</strong>
+    <!-- <strong class="small-title">Unauthorized/Token Not Found</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 401 Error </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -92,6 +115,6 @@
                 <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Expected boolean"</div></div>
             <div class="pt1">}</div>   
         </div>
-    </section>
+    </section> -->
 
 </section>
