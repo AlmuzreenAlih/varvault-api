@@ -1,6 +1,6 @@
 <section class="content">
-    <p><strong class="title">Registration Endpoint </strong><strong class="httppost">POST</strong></p>
-    <p class="paragraph">The register endpoint allows users to create a new account by providing their desired username and password.</p>
+    <h2>Registration Endpoint <strong class="httppost">POST</strong></h2>
+    <p>The register endpoint allows users to create a new account by providing their desired username and password.</p>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <section class="httplink linkpost">
         <span class="httplinkbody">
@@ -11,7 +11,7 @@
         
     </section>
     
-    <p><strong class="sub-title">Request Body Parameters</strong></p>
+    <h3>Request Body Parameters</h3>
     <section class="table tc113 tr111">
         <div class="thead">Parameter</div>
         <div class="thead">Type</div>
@@ -24,7 +24,7 @@
         <div class="tbody">The password for the new account.</div>
     </section>
 
-    <p><strong class="sub-title">Responses</strong></p>
+    <h3>Responses</h3>
     <strong class="small-title">Successful Registration</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
@@ -55,7 +55,7 @@
 
     <strong class="small-title">Validation Error</strong>
     <ul>
-        <li class="bullets1"><strong>Status Code:</strong> 400 Bad Request </li>
+        <li class="bullets1"><strong>Status Code:</strong> 422 Bad Request </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
     </ul>
     <section class="table">
@@ -63,6 +63,108 @@
         <div class="tbody">
             <div class="pt1">{</div>
                 <div class="pt2"> <div class="key">"error"</div> : <div class="value">"[Validation Error Message]"</div></div>
+            <div class="pt1">}</div>   
+        </div>
+    </section>
+
+    <h2>Change Username Endpoint <strong class="httppatch">PATCH</strong></h2>
+    <p>The username endpoint allows users to change their account's username.</p>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <section class="httplink linkpatch">
+        <span class="httplinkbody">
+            <div>PATCH</div>
+            <div>www.varvault.com/user/change-username</div>
+            <i class="material-icons copy">content_copy</i>
+        </span>
+        
+    </section>
+    
+    <h3>Authorization Header</h3>
+    <p>This endpoint uses Basic Authentication for the changing of account's username.</p>
+    <section class="table tc113 tr111">
+        <div class="thead">Parameter</div>
+        <div class="thead">Type</div>
+        <div class="thead">Description</div>
+        <div class="tbody">username</div>
+        <div class="tbody">String</div>
+        <div class="tbody">The registered username of the user.</div>
+        <div class="tbody">password</div>
+        <div class="tbody">String</div>
+        <div class="tbody">The registered password of the user.</div>
+    </section>
+
+    <h3>Request Body Parameters</h3>
+    <section class="table tc113">
+        <div class="thead">Parameter</div>
+        <div class="thead">Type</div>
+        <div class="thead">Description</div>
+        <div class="tbody">new_username</div>
+        <div class="tbody">String</div>
+        <div class="tbody">The desired new username of the user.</div>
+    </section>
+
+    <h3>Response</h3>
+    <strong class="small-title">Successful Username Change</strong>
+    <ul>
+        <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
+        <li class="bullets1"><strong>Response Body:</strong></li>
+    </ul>
+    <section class="table">
+        <div class="thead">json</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Successful username update."</div>,</div>
+            <div class="pt1">}</div>   
+        </div>
+    </section>
+
+    <h2>Change Password Endpoint <strong class="httppatch">PATCH</strong></h2>
+    <p>The password endpoint allows users to change their account's password.</p>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <section class="httplink linkpatch">
+        <span class="httplinkbody">
+            <div>PATCH</div>
+            <div>www.varvault.com/user/change-password</div>
+            <i class="material-icons copy">content_copy</i>
+        </span>
+        
+    </section>
+    
+    <h3>Authorization Header</h3>
+    <p>This endpoint uses Basic Authentication for the changing of account's password.</p>
+    <section class="table tc113 tr111">
+        <div class="thead">Parameter</div>
+        <div class="thead">Type</div>
+        <div class="thead">Description</div>
+        <div class="tbody">username</div>
+        <div class="tbody">String</div>
+        <div class="tbody">The registered username of the user.</div>
+        <div class="tbody">password</div>
+        <div class="tbody">String</div>
+        <div class="tbody">The registered password of the user.</div>
+    </section>
+
+    <h3>Request Body Parameters</h3>
+    <section class="table tc113">
+        <div class="thead">Parameter</div>
+        <div class="thead">Type</div>
+        <div class="thead">Description</div>
+        <div class="tbody">new_password</div>
+        <div class="tbody">String</div>
+        <div class="tbody">The desired new password of the user.</div>
+    </section>
+
+    <h3>Response</h3>
+    <strong class="small-title">Successful Password Change</strong>
+    <ul>
+        <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
+        <li class="bullets1"><strong>Response Body:</strong></li>
+    </ul>
+    <section class="table">
+        <div class="thead">json</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Successful password update."</div>,</div>
             <div class="pt1">}</div>   
         </div>
     </section>

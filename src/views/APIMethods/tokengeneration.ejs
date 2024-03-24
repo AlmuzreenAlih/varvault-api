@@ -1,6 +1,6 @@
 <section class="content">
-    <p><strong class="title">Token Generation Endpoint </strong><strong class="httppost">POST</strong></p>
-    <p class="paragraph">The generate token endpoint allows users to generate an 30-day expiring token by providing their desired username and password.</p>
+    <h2>Token Generation Endpoint </strong><strong class="httppost">POST</strong></h2>
+    <p>The generate token endpoint allows users to generate an 30-day expiring token by providing their desired username and password.</p>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <section class="httplink linkpost">
         <span class="httplinkbody">
@@ -11,10 +11,9 @@
         
     </section>
     
-    <p><strong class="sub-title">Authorization Header</strong></p>
-    <p class="paragraph">This endpoint uses Basic Authentication for username and password</p>
-
-    <section class="table tc113 tr111">
+    <h3>Authorization Header</h3>
+    <p>This endpoint uses Basic Authentication for the changing of account's username.</p>
+    <section class="table tc113">
         <div class="thead">Parameter</div>
         <div class="thead">Type</div>
         <div class="thead">Description</div>
@@ -26,7 +25,7 @@
         <div class="tbody">The registered password of the account.</div>
     </section>
 
-    <p><strong class="sub-title">Responses</strong></p>
+    <h3>Response</h3>
     <strong class="small-title">Successful Token Generation</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
@@ -43,7 +42,7 @@
         </div>
     </section>
     
-    <strong class="small-title">Wrong Username or Password</strong>
+    <!-- <strong class="small-title">Wrong Username or Password</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 409 Conflict </li>
         <li class="bullets1"><strong>Response Body:</strong></li>
@@ -53,6 +52,42 @@
         <div class="tbody">
             <div class="pt1">{</div>
                 <div class="pt2"> <div class="key">"error"</div> : <div class="value">"Wrong username/password"</div></div>
+            <div class="pt1">}</div>   
+        </div>
+    </section> -->
+
+    <h2>Renew Token Expiration Endpoint <strong class="httppatch">PATCH</strong></h2>
+    <p>This endpoint allows users to renew their generated token's expiration</p>
+    <section class="httplink linkpatch">
+        <span class="httplinkbody">
+            <div>PATCH</div>
+            <div>www.varvault.com/user/renew-token</div>
+            <i class="material-icons copy putt">content_copy</i>
+        </span>
+        
+    </section>
+    
+    <h3>Authorization Header</h3>
+    <p>This endpoint uses Bearer Authentication for the token renewal.</p>
+
+    <section class="table tc23">
+        <div class="thead">Parameter</div>
+        <div class="thead">Description</div>
+        <div class="tbody">Bearer</div>
+        <div class="tbody">The user's generated token</div>
+    </section>
+
+    <h3>Response</h3>
+    <strong class="small-title">Successful Token Renewal</strong>
+    <ul>
+        <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>
+        <li class="bullets1"><strong>Response Body:</strong></li>
+    </ul>
+    <section class="table">
+        <div class="thead">json</div>
+        <div class="tbody">
+            <div class="pt1">{</div>
+                <div class="pt2"> <div class="key">"message"</div> : <div class="value">"Token expiration is renewed."</div>,</div>
             <div class="pt1">}</div>   
         </div>
     </section>

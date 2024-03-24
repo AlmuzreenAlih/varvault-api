@@ -1,19 +1,19 @@
 <section class="content">
-    <p><strong class="title">Update Variable Endpoint </strong><strong class="httpput">PUT</strong></p>
-    <p class="paragraph">Updates the users' variables by using the generated token.</p>
+    <h2>Update Variable Endpoint <strong class="httppatch">PATCH</strong></h2>
+    <p>Updates the users' variables by providing a generated token.</p>
     
-    <p><strong class="sub-title">Basic Authentication Endpoint </strong></p>
-    <section class="httplink linkput">
+    <h3>Basic Authentication Endpoint </strong></h3>
+    <section class="httplink linkpatch">
         <span class="httplinkbody">
-            <div>PUT</div>
+            <div>PATCH</div>
             <div>www.varvault.com/var/update</div>
             <i class="material-icons copy putt">content_copy</i>
         </span>
         
     </section>
     
-    <p><strong class="sub-title">Authorization Header</strong></p>
-    <p class="paragraph">This endpoint uses Basic Authentication for username and password for the variable updating.</p>
+    <h3>Authorization Header</strong></h3>
+    <p>This endpoint uses Basic Authentication for username and password for the variable updating.</p>
 
     <section class="table tc23">
         <div class="thead">Parameter</div>
@@ -24,27 +24,27 @@
         <div class="tbody">The registered password of the account.</div>
     </section>
 
-    <p><strong class="sub-title">Bearer Token Authentication Endpoint </strong></p>
-    <section class="httplink linkput">
+    <h3>Bearer Token Authentication Endpoint </strong></h3>
+    <section class="httplink linkpatch">
         <span class="httplinkbody">
-            <div>PUT</div>
+            <div>PATCH</div>
             <div>www.varvault.com/var/update-viatoken</div>
             <i class="material-icons copy putt">content_copy</i>
         </span>
         
     </section>
     
-    <p><strong class="sub-title">Authorization Header</strong></p>
-    <p class="paragraph">This endpoint uses Bearer Authentication for the variable updating.</p>
+    <h3>Authorization Header</strong></h3>
+    <p>This endpoint uses Bearer Authentication for the variable updating.</p>
 
     <section class="table tc23">
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
         <div class="tbody">Bearer</div>
-        <div class="tbody">The user's generated token</div>
+        <div class="tbody">A user's generated token</div>
     </section>
 
-    <p><strong class="sub-title">Request Body Parameters</strong></p>
+    <h3>Request Body Parameters</strong></h3>
     <section class="table tc23">
         <div class="thead">Parameter</div>
         <div class="thead">Description</div>
@@ -54,7 +54,7 @@
         <div class="tbody">The initial value of the variable</div>
     </section>
 
-    <p><strong class="sub-title">Response</strong></p>
+    <h3>Response</strong></h3>
     <strong class="small-title">Successful Variable Updating</strong>
     <ul>
         <li class="bullets1"><strong>Status Code:</strong> 200 Ok </li>

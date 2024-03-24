@@ -55,7 +55,31 @@ export async function getAllVariables(stored_user_id) {
   );
   return result.rows;
 }
+
+export async function getAllUserTokens(stored_user_id) {
+  const result = await db.query(
+    "SELECT id,token,created_at FROM tokens WHERE user_id = $1",
+    [stored_user_id]
+  );
+  return result.rows;
+}
+
 //UPDATE
+export async function updateUserUsername(id,us) {
+  await db.query(
+    "UPDATE users SET us = $1 WHERE id = $2", 
+    [us,id]);
+}
+export async function updateUserPassword(id,pw) {
+  await db.query(
+    "UPDATE users SET pw = $1 WHERE id = $2", 
+    [pw,id]);
+}
+export async function renewUserToken(token) {
+  await db.query(
+    "UPDATE tokens SET created_at = CURRENT_TIMESTAMP WHERE token = $1", 
+    [token]);
+}
 export async function updateVariable(id,value) {
   await db.query(
     "UPDATE variables SET value = $1 WHERE id = $2", 

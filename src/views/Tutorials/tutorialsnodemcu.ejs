@@ -1,17 +1,20 @@
 <section class="content">
-    <p>
-        <strong class="title">Using VarVault with NodeMCU
-            <img class="sideimage" src="https://cdn0637.cdn4s.com/media/logo/nodemcu-esp-mlab-com-vn.png" alt="">
-        </strong>
-    </p>
-    <p class="paragraph">With NodeMCU, you can read data from sensors such as temperature, humidity, light, motion, and many others. HTTPs request can be quite a challenge in developing since it is an HTTP with added security features provided by encryption protocols and there is a need for CA certificate.</p>
+
+    <h2>Using VarVault with NodeMCU
+        <img class="sideimage" src="https://cdn0637.cdn4s.com/media/logo/nodemcu-esp-mlab-com-vn.png" alt="">
+    </h2>
+
+    <p>With NodeMCU, you can read data from sensors such as temperature, humidity, light, motion, and many others. HTTPs request
+        can be quite a challenge in developing since it is an HTTP with added security features provided by encryption protocols 
+        and there is a need for CA certificate.</p>
     <div class="pageimage"><img src="./img/arduino-intro.jpg" alt=""><i>DS18b20 (temperature sensor) connected to NodeMCU</i></div>
-    <p class="paragraph">WifiClientSecure is an Arduino Library that supports the HTTPs request and can be uploaded to the NodeMCU. Using the WifiClientSecure, you can specify the CA certificates.</p>
+    <p>WifiClientSecure is an Arduino Library that supports the HTTPs request and can be uploaded to the NodeMCU. Using the 
+        WifiClientSecure, you can specify the CA certificates.</p>
     <div class="pageimage"><img src="./img/sample.png" alt=""><i></i></div>
 
-    <p class="paragraph">Source Code Link: <a class="link" href="https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/examples/WiFiClientSecure/WiFiClientSecure.ino">WiFiClientSecure.ino</a></p>
+    <p>Source Code Link: <a class="link" href="https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/examples/WiFiClientSecure/WiFiClientSecure.ino">WiFiClientSecure.ino</a></p>
 
-    <p><strong class="sub-title">Steps on putting the right CA certificate</strong></p>
+    <h3>Steps on putting the right CA certificate</h3>
     <ol>
         <li>Access this website's SSL certificate details from your browser. This is done by clicking on the padlock icon next to 
             the website's URL in the browser's address bar and then navigating to the certificate details.</li>
@@ -28,10 +31,13 @@
             to paste it between the "-----BEGIN CERTIFICATE-----" and "-----END CERTIFICATE-----" lines.</li>
     </ol>
 
-    <p class="paragraph">Once you've done this, your NodeMCU/ESP8266 should be able to establish a secure connection with your website using HTTPS.</p>
+    <p>Once you've done this, your NodeMCU/ESP8266 should be able to establish a secure connection with your website using HTTPS.</p>
 
-    <p><strong class="sub-title">POST Request using WifiClientSecure Library</strong></p>
-    <p class="paragraph">This code snippet constructs a POST request to send sensor data, specifically temperature readings, to a server. It initializes the temperature reading to 37.5 degrees Celsius, then formats this reading along with authentication token and variable name into a URL-encoded string. The string is then included in the body of the HTTP request, along with necessary headers such as Content-Type and Content-Length, and sent to the designated server endpoint using the HTTP/1.1 protocol.</p>
+    <h3>POST Request using WifiClientSecure Library</h3>
+    <p>This code snippet constructs a POST request to send sensor data, specifically temperature readings, to a server. It initializes 
+        the temperature reading to 37.5 degrees Celsius, then formats this reading along with authentication token and variable name into 
+        a URL-encoded string. The string is then included in the body of the HTTP request, along with necessary headers such as 
+        Content-Type and Content-Length, and sent to the designated server endpoint using the HTTP/1.1 protocol.</p>
 
     <section class="codings noMarginBottom">
         <h1>c++
@@ -49,14 +55,15 @@ Temperature_Reading = 37.5; //Sample temperature reading
 String token = "500fbhajgccfei";
 String variable_name = "Temperature";
 String value = String(Temperature_Reading, 2);
-String postData = "token=" + urlEncode(token) + "&" +
-                  "variable_name=" + urlEncode(variable_name) + "&" +
+String postData = "variable_name=" + urlEncode(variable_name) + "&" +
                   "value=" + urlEncode(value);
 
 // POST Request
 client.println("POST " + endpoint + " HTTP/1.1");
 client.println("Host: " + server);
 client.println("Content-Type: application/x-www-form-urlencoded");
+client.print("Authorization: Bearer ");
+client.println(token);
 client.print("Content-Length: ");
 client.println(postData.length());
 client.println();

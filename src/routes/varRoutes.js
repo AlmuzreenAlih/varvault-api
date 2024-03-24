@@ -4,8 +4,8 @@ import * as varControllers from "../controllers/varControllers.js"
 const varRouter = express.Router();
 varRouter.post("/add",              varControllers.addVariable);
 varRouter.post("/add-viatoken",     varControllers.addVariableViaToken);
-varRouter.put("/update",   varControllers.updateVariable);
-varRouter.put("/update-viatoken",   varControllers.updateVariableViaToken);
+varRouter.patch("/update",   varControllers.updateVariable);
+varRouter.patch("/update-viatoken",   varControllers.updateVariableViaToken);
 varRouter.delete("/delete",         varControllers.deleteVariable);
 varRouter.delete("/delete-viatoken",varControllers.deleteVariableViaToken);
 varRouter.post("/read",             varControllers.readVariable);

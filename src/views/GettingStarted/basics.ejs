@@ -1,13 +1,11 @@
 <section class="content">
-    <p><strong class="title">Basics</strong>
-        <!-- <img class="sideimage" src="nodelogo.png" alt=""> -->
-    </p>
-    <p class="paragraph">This guide will help you get started with using the Varvault API to store and manage variables for your user interface applications and embedded board devices such as NodeMCU, Raspberry pi or Arduino.</p>
+    <h2>Basics</h2>
+    <p>This guide will help you get started with using the Varvault API to store and manage variables for your user interface applications and embedded board devices such as NodeMCU, Raspberry pi or Arduino.</p>
     <section class="pageimage"><img src="./img/http.png" alt=""></section>
 
-    <p><strong class="sub-title">Quick Guide</strong></p>
+    <h3>Quick Guide</h3>
     <ol>
-        <li><strong>Register: </strong> (See the API Method <a class="link" href="/register">Registration)</a>
+        <li><strong>Register: </strong> (See the API Method <a class="link" href="/register">User Registration)</a>
             <p>Provide a username and a password. These credentials will be used to add future variables to your account and to delete them.</p>
         </li>
 
@@ -18,7 +16,8 @@
         </li>
 
         <li><strong>Add a variable: </strong> (See the API Method <a class="link" href="/add-variable">Adding a variable)</a>
-            <p>Use your registered username and password to add a variable name (i.e. Temperature) and its any first value.
+            <p>Use your registered username and password to add a variable name (i.e. Temperature) and its any first value. 
+                You can specify its type (numeric, boolean, or text) and the unit (i.e. Celcius, Pa, °F)
             </p>
         </li>
 
@@ -27,25 +26,38 @@
                 put in your embedded board devices. (See our <a class="link" href="/https-arduino">Tutorials)</a>
             </p>
         </li>
+
+        <li><strong>Read the variable: </strong> (See the API Method <a class="link" href="/read-variable">Reading a variable)</a>
+            <p>Read your variables. This would be essential if you have created an application that needs the value of your
+                variable (i.e. Android App) 
+            </p>
+        </li>
     </ol>
     <br>
-    <p><strong class="sub-title">All VarVault API's Endpoints:</strong></p>
+    <h3>All VarVault API's Endpoints:</h3>
     <ol>
         <li><p><strong>User Management</strong></p>
             <ul>
                 <li class="bullets1"><strong>`/user/register`</strong> : Register a new user account.</li>
+                <li class="bullets1"><strong>`/user/change-username`</strong> : Change the username an existing user.</li>
+                <li class="bullets1"><strong>`/user/change-password`</strong> : Change the password an existing user.</li>
                 <li class="bullets1"><strong>`/user/gen-token`</strong> : Generate an authentication token for an existing user.</li>
+                <li class="bullets1"><strong>`/user/renew-token`</strong> : Renews the expiration of the authentication token.</li>
             </ul>
         </li>
 
         <li><p><strong>Variable Management</strong></p>
             <ul>
-                <li class="bullets1"><strong>`/var/add-variable`</strong>               : Add a new variable for the authenticated user.</li>
-                <li class="bullets1"><strong>`/var/add-variable-viatoken`</strong>      : Add a new variable using a generated token.</li>
-                <li class="bullets1"><strong>`/var/update-variable-viatoken`</strong>   : Update an existing variable using a token.</li>
-                <li class="bullets1"><strong>`/var/delete-variable`</strong>            : Delete a variable associated with the authenticated user.</li>
-                <li class="bullets1"><strong>`/var/read-variable`</strong>              : Read the value of a specific variable.</li>
-                <li class="bullets1"><strong>`/var/read-variables/&lt;format1&gt; or &lt;format2&gt;`</strong>     : Read all variables associated with the authenticated user in a specified format.</li>
+                <li class="bullets1"><strong>`/var/add`</strong>               : Add a new variable for the authenticated user.</li>
+                <li class="bullets1"><strong>`/var/add-viatoken`</strong>      : Add a new variable using a generated token.</li>
+                <li class="bullets1"><strong>`/var/update`</strong>            : Update an existing for the authenticated user.</li>
+                <li class="bullets1"><strong>`/var/update-viatoken`</strong>   : Update an existing variable using a generated token.</li>
+                <li class="bullets1"><strong>`/var/delete`</strong>            : Delete a variable for the authenticated user.</li>
+                <li class="bullets1"><strong>`/var/delete-viatoken`</strong>   : Delete a variable using a generated token.</li>
+                <li class="bullets1"><strong>`/var/read`</strong>              : Read the value of a specific variable for the authenticated user.</li>
+                <li class="bullets1"><strong>`/var/read-viatoken`</strong>              : Read the value of a specific variable using a generated token.</li>
+                <li class="bullets1"><strong>`/var/read-all/&lt;format1&gt; or &lt;format2&gt;`</strong>     : Read all variables associated with the authenticated user in a specified format.</li>
+                <li class="bullets1"><strong>`/var/read-all-viatoken/&lt;format1&gt; or &lt;format2&gt;`</strong>     : Read all variables associated a generated token in a specified format.</li>
             </ul>
         </li>
     </ol>
