@@ -8,9 +8,10 @@ const tokenGenerator = new TokenGenerator({
 
 //CREATE
 export async function insertUser(username, hashedPassword) {
-  db.query(
-    "INSERT INTO users (us, pw) VALUES ($1, $2)", 
+  const result = await db.query(
+    "INSERT INTO users (us, pw) VALUES ($1, $2) RETURNING id, us", 
     [username, hashedPassword]);
+  return result.rows;
 }
 export async function insertVariableName(stored_user_id, variable_name, value, variable_type, unit) {
   db.query(
@@ -41,6 +42,15 @@ export async function findVariableName(variable_name,stored_user_id) {
   );
   return result.rows;
 }
+
+export async function findBrowserToken(token) {
+  const result = await db.query(
+    "SELECT * FROM browser_tokens WHERE token = $1", 
+    [token]);
+    
+  return result.rows;
+}
+
 export async function selectToken(token) {
   const result = await db.query(
     "SELECT * FROM tokens WHERE token = $1",
@@ -50,7 +60,7 @@ export async function selectToken(token) {
 }
 export async function getAllVariables(stored_user_id) {
   const result = await db.query(
-    "SELECT variable_name, value, updated_at FROM variables WHERE user_id = $1",
+    "SELECT variable_name, value, unit,updated_at FROM variables WHERE user_id = $1",
     [stored_user_id]
   );
   return result.rows;
