@@ -8,14 +8,17 @@ const tokenGenerator = new TokenGenerator({
   timestampMap: 'abcdefghij', // 10 chars array for obfuscation purposes
 });
 
-export async function login(req, res) { if (process.env.PG_USER) {console.log("Debug: LOGIN");}
+export async function login(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: LOGIN");}
     let username    =   req.body.username;
     let password    =   req.body.password;
   
     // Check if username is in the database
-    const stored_user = await MODEL.selectUserByUsername(username);
-    if ((stored_user.length < 1)) {
-      return res.status(409).json({ error: "Wrong username/password" });
+    let stored_user;
+    try {
+      stored_user = await MODEL.selectUserByUsername(username);
+      if ((stored_user.length < 1)) {return res.status(409).json({ error: "Wrong username/password" });}
+    } catch (SQLError) {console.log(SQLError); 
+      return res.status(409).json({ error: "SQL Error" });
     }
 
     // Check if Password is matched with the stored
@@ -29,21 +32,30 @@ export async function login(req, res) { if (process.env.PG_USER) {console.log("D
     } catch (ComparingError) { console.log(ComparingError);
       return res.status(409).json({ error: "Password comparing error" });
     }
+
+    // Insert the browser token
     var token = tokenGenerator.generate();
-    db.query(
-      "INSERT INTO browser_tokens (user_id, token) VALUES ($1, $2)",
-      [stored_user_id, token]
-    );
+    try {
+      MODEL.insertGeneratedBrowserToken(stored_user_id, token);
+      MODEL.logger("WEB", "account", stored_user_id, stored_user_id, "register");
+    } catch (SQLError) { console.log(SQLError);
+      return res.status(400).json({ error: "SQL Error" });
+    }
+    
     return res.json({authenticated: true, token: token});
 }
 
-export async function register(req, res) { if (process.env.PG_USER) {console.log("Debug: REGISTER",req.body);}
+export async function register(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: REGISTER",req.body);}
   let username    =   req.body.username;
   let password    =   req.body.password;
 
   // Check if the username already exists
-  if ((await MODEL.selectUserByUsername(username)).length > 0) {
-    return res.status(409).json({ error: "Username already registered" });
+  try {
+    if ((await MODEL.selectUserByUsername(username)).length > 0) {
+      return res.status(409).json({ error: "Username already registered" });
+    }
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
   }
   
   //Hash the password
@@ -54,19 +66,23 @@ export async function register(req, res) { if (process.env.PG_USER) {console.log
     return res.status(400).json({ error: "Error at password hashing" });
   }
 
-  //Insert the user
+  // Insert the user
   let user;
   try {
     user = await MODEL.insertUser(username, hashedPassword);
   } catch (SQLError) { console.log(SQLError);
-    return res.status(400).json({ error: "SQL Error registering user" });
+    return res.status(400).json({ error: "SQL Error" });
   }
 
+  // Insert the browser token
   var token = tokenGenerator.generate();
-  db.query(
-    "INSERT INTO browser_tokens (user_id, token) VALUES ($1, $2)",
-    [user[0].id, token]
-  );
+  try {
+    MODEL.insertGeneratedBrowserToken(user[0].id, token);
+    MODEL.logger("WEB", "account", user[0].id, user[0].id, "register");
+  } catch (SQLError) { console.log(SQLError);
+    return res.status(400).json({ error: "SQL Error" });
+  }
+
   return res.json({authenticated: true, token: token});
 }
 
@@ -74,19 +90,28 @@ export async function usernameChecker(req, res) {
     let username    =   req.body.username;
 
     // Check if the username already exists
-    if ((await MODEL.selectUserByUsername(username)).length > 0) {
-      return res.status(409).json({ availability: false });
+    try {
+      if ((await MODEL.selectUserByUsername(username)).length > 0) {
+        return res.status(409).json({ availability: false });
+      }
+    } catch (SQLError) {console.log(SQLError); 
+      return res.status(409).json({ error: "SQL Error" });
     }
 
     return res.json({ availability: true });
 
 }
 
-export async function auth(req, res) { if (process.env.PG_USER) {console.log("Debug: AUTH",req.body);}
+export async function auth(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: AUTH",req.body);}
   let token = req.body.token;
 
-  const result = await MODEL.findBrowserToken(token);
-  
+  // Check if the Browser Token exists
+  let result;
+  try {
+    result = await MODEL.findBrowserToken(token);
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
   if (result.length > 0) {
     return res.json({ authenticated: true, msg: "token good"});
   } else {
@@ -94,22 +119,56 @@ export async function auth(req, res) { if (process.env.PG_USER) {console.log("De
   }
 }
 
-export async function getAll(req, res) { if (process.env.PG_USER) {console.log("Debug: GET ALL",req.body);}
+export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET ALL",req.body);}
   let token  = req.body.token;
 
-  const result = await db.query(
-    "SELECT * FROM browser_tokens WHERE token = $1", 
-    [token]);
-  
-  if (result.rows.length === 0) {
-    return res.status(401).json({ authenticated: false });
-  } 
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
 
   // Get all for the user
-  const AllVariables = await MODEL.getAllVariables(result.rows[0]['user_id']);
-  const AllTokens = await MODEL.getAllUserTokens(result.rows[0]['user_id']);
+  let AllVariables, AllTokens, AllLogs;
+  try {
+    AllVariables = await MODEL.getAllVariables(result[0]['user_id']);
+    AllTokens = await MODEL.getAllUserTokens(result[0]['user_id']);
+    AllLogs = await MODEL.getLogsCursored(result[0]['user_id']);
+  // MODEL.logger("WEB", "account", result.rows[0]['user_id'], result.rows[0]['user_id'], "login");
   return res.json({ created_at: "July 15, 2023",
-                    logs: AllTokens,
+                    logs: AllLogs.slice(0,10),
+                    cnt_logs: AllLogs.length,
                     variables: AllVariables, 
-                    tokens: AllTokens });
+                    cnt_variables: AllVariables.length,
+                    tokens: AllTokens,
+                    cnt_tokens: AllTokens.length
+                  });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  } 
+}
+
+export async function getLogs(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET VARS_C",req.body);}
+  let token  = req.body.token;
+  let cursor = req.body.cursor;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
+
+  // Get logs for the user
+  try { 
+    const Logs = await MODEL.getLogsCursored(result[0]['user_id'], cursor);
+    return res.json({ logs: Logs });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
 }

@@ -2,6 +2,7 @@ import 'dotenv/config'
 import cors from 'cors';
 import express from "express";
 import bodyParser from "body-parser";
+
 import userRoutes from "./src/routes/userRoutes.js"
 import varRoutes from "./src/routes/varRoutes.js"
 import publicRoutes from "./src/routes/publicRoutes.js"
@@ -13,6 +14,7 @@ const port = 3000;
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+
 app.set('views', './src/views');
 
 app.use("", publicRoutes);

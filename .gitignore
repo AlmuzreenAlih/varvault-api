@@ -1,4 +1,3 @@
-# git add . && git commit -mm "Add NodeMCU tutorial page to the API Documentation" && git pushh
 hash.js
 node_modules/
 public/styles/main.css

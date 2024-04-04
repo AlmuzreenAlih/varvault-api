@@ -7,5 +7,6 @@ privateRouter.post("/register",  privateControllers.register);  //Previously app
 privateRouter.post("/username-check",  privateControllers.usernameChecker);  //Previously app.
 privateRouter.post("/auth",  privateControllers.auth);  //Previously app.
 privateRouter.post("/get-all",  privateControllers.getAll);  //Previously app.
+privateRouter.post("/get-logs",  privateControllers.getLogs);  //Previously app.
 
 export default privateRouter;

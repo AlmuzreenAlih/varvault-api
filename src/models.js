@@ -28,6 +28,23 @@ export async function insertGeneratedToken(stored_user_id) {
   return token;
 }
 
+export async function insertGeneratedBrowserToken(stored_user_id, token) {
+  db.query(
+    "INSERT INTO browser_tokens (user_id, token) VALUES ($1, $2)",
+    [stored_user_id, token]
+  );
+  return token;
+}
+
+export async function logger(gateway, category, user_id, pointing_id, operation) {
+  var token = tokenGenerator.generate();
+  db.query(
+    "INSERT INTO logs (gateway, category, user_id, pointing_id, operation) VALUES ($1, $2, $3, $4, $5)",
+    [gateway, category, user_id, pointing_id, operation]
+  );
+  return token;
+}
+
 //READ
 export async function selectUserByUsername(username) {
   const result = await db.query(
@@ -47,7 +64,7 @@ export async function findBrowserToken(token) {
   const result = await db.query(
     "SELECT * FROM browser_tokens WHERE token = $1", 
     [token]);
-    
+
   return result.rows;
 }
 
@@ -58,9 +75,10 @@ export async function selectToken(token) {
   );
   return result.rows;
 }
+
 export async function getAllVariables(stored_user_id) {
   const result = await db.query(
-    "SELECT variable_name, value, unit,updated_at FROM variables WHERE user_id = $1",
+    "SELECT * FROM variables WHERE user_id = $1",
     [stored_user_id]
   );
   return result.rows;
@@ -68,9 +86,33 @@ export async function getAllVariables(stored_user_id) {
 
 export async function getAllUserTokens(stored_user_id) {
   const result = await db.query(
-    "SELECT id,token,created_at FROM tokens WHERE user_id = $1",
+    "SELECT * FROM tokens WHERE user_id = $1",
     [stored_user_id]
   );
+  return result.rows;
+}
+
+export async function getAllLogs(stored_user_id) {
+  const result = await db.query(
+    "SELECT * FROM logs WHERE user_id = $1",
+    [stored_user_id]
+  );
+  return result.rows;
+}
+
+export async function getLogsCursored(stored_user_id,cursor_id) {
+  let result;
+  if (cursor_id === undefined) {
+    result = await db.query(
+      "SELECT * FROM logs WHERE user_id = $1 ORDER BY id DESC",
+      [stored_user_id]
+    );
+  } else {
+    result = await db.query(
+      "SELECT * FROM logs WHERE user_id = $1 AND id < $2 ORDER BY id DESC LIMIT 10",
+      [stored_user_id,cursor_id]
+    );
+  }
   return result.rows;
 }
 
