@@ -60,6 +60,14 @@ export async function findVariableName(variable_name,stored_user_id) {
   return result.rows;
 }
 
+export async function findVariableNameByID(variable_id,stored_user_id) {
+  const result = await db.query(
+    "SELECT * FROM variables WHERE user_id = $1 AND id = $2",
+    [stored_user_id, variable_id]
+  );
+  return result.rows;
+}
+
 export async function findBrowserToken(token) {
   const result = await db.query(
     "SELECT * FROM browser_tokens WHERE token = $1", 
@@ -76,17 +84,39 @@ export async function selectToken(token) {
   return result.rows;
 }
 
-export async function getAllVariables(stored_user_id) {
-  const result = await db.query(
-    "SELECT * FROM variables WHERE user_id = $1",
-    [stored_user_id]
-  );
+export async function getAllVariables(stored_user_id,order_by,order,offset) {
+  let result;
+  if (order_by==="") {console.log("Default");
+    result = await db.query(
+      "SELECT * FROM variables WHERE user_id = $1 ORDER BY id ASC LIMIT 10 OFFSET $2",
+      [stored_user_id,offset]
+    );
+  } else {
+    let orderByClause = "";
+    if (order === "true") {order = "ASC";} else {order = "DESC";}
+    orderByClause = `ORDER BY ${order_by} ${order}`;
+    result = await db.query(
+      `SELECT * FROM variables WHERE user_id = $1 ${orderByClause} LIMIT 10 OFFSET $2`,
+      [stored_user_id,offset]
+    );
+  }
+  return result.rows;
+}
+
+export async function countAllVariables(stored_user_id) {
+  let result;
+  if (true) {console.log("Default");
+    result = await db.query(
+      "SELECT COUNT(*) AS total_count FROM variables WHERE user_id = $1",
+      [stored_user_id]
+    );
+  }
   return result.rows;
 }
 
 export async function getAllUserTokens(stored_user_id) {
   const result = await db.query(
-    "SELECT * FROM tokens WHERE user_id = $1",
+    "SELECT * FROM tokens WHERE user_id = $1 ORDER BY id ASC",
     [stored_user_id]
   );
   return result.rows;
@@ -94,7 +124,7 @@ export async function getAllUserTokens(stored_user_id) {
 
 export async function getAllLogs(stored_user_id) {
   const result = await db.query(
-    "SELECT * FROM logs WHERE user_id = $1",
+    "SELECT * FROM logs WHERE user_id = $1 ORDER BY id DESC",
     [stored_user_id]
   );
   return result.rows;
@@ -110,6 +140,38 @@ export async function getLogsCursored(stored_user_id,cursor_id) {
   } else {
     result = await db.query(
       "SELECT * FROM logs WHERE user_id = $1 AND id < $2 ORDER BY id DESC LIMIT 10",
+      [stored_user_id,cursor_id]
+    );
+  }
+  return result.rows;
+}
+
+export async function getVariablesCursored(stored_user_id,cursor_id) {
+  let result;
+  if (cursor_id === undefined) {
+    result = await db.query(
+      "SELECT * FROM variables WHERE user_id = $1 ORDER BY id ASC",
+      [stored_user_id]
+    );
+  } else {
+    result = await db.query(
+      "SELECT * FROM variables WHERE user_id = $1 AND id > $2 ORDER BY id ASC LIMIT 10",
+      [stored_user_id,cursor_id]
+    );
+  }
+  return result.rows;
+}
+
+export async function getTokensCursored(stored_user_id,cursor_id) {
+  let result;
+  if (cursor_id === undefined) {
+    result = await db.query(
+      "SELECT * FROM tokens WHERE user_id = $1 ORDER BY id ASC",
+      [stored_user_id]
+    );
+  } else {
+    result = await db.query(
+      "SELECT * FROM tokens WHERE user_id = $1 AND id > $2 ORDER BY id ASC LIMIT 10",
       [stored_user_id,cursor_id]
     );
   }
@@ -137,7 +199,13 @@ export async function updateVariable(id,value) {
     "UPDATE variables SET value = $1 WHERE id = $2", 
     [value,id]);
 }
+export async function editVariable(id,name,value,type,unit) {
+  const result = await db.query(
+    "UPDATE variables SET variable_name=$1, value=$2, variable_type=$3, unit=$4, updated_at=CURRENT_TIMESTAMP WHERE id=$5 RETURNING *", 
+    [name,value,type,unit,id]);
 
+  return result.rows;
+}
 //DELETE
 export async function deleteVariable(id) {
   await db.query(

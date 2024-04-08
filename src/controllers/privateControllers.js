@@ -2,6 +2,7 @@ import * as MODEL from '../models.js';
 import TokenGenerator from 'token-generator';
 import * as HASH from '../../hash.js'; //git ignored
 import db from '../../configuration/dbConfig.js';
+import * as SCHEMA from '../../schema.js';
 
 const tokenGenerator = new TokenGenerator({
   salt: 'your secret ingredient for this magic recipe.',
@@ -37,7 +38,7 @@ export async function login(req, res) { if (Boolean(process.env.DEBUGGING)) {con
     var token = tokenGenerator.generate();
     try {
       MODEL.insertGeneratedBrowserToken(stored_user_id, token);
-      MODEL.logger("WEB", "account", stored_user_id, stored_user_id, "register");
+      MODEL.logger("WEB", "account", stored_user_id, stored_user_id, "login");
     } catch (SQLError) { console.log(SQLError);
       return res.status(400).json({ error: "SQL Error" });
     }
@@ -120,8 +121,15 @@ export async function auth(req, res) { if (Boolean(process.env.DEBUGGING)) {cons
 }
 
 export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET ALL",req.body);}
-  let token  = req.body.token;
+  let token    = req.body.token;
+  let page     = req.body.page;       
+  let order_by = req.body.order_by;   
+  let order    = req.body.order;      
 
+  // Validate the input data
+  if ((page===undefined) || (page==="")) {page=1;} else {page=Number(page)} // If page is not specified then force it equal to 1 (As in the overview of the WEB UI)
+  if ((order_by===undefined) || (order===undefined)) {order_by="";order="";} // If order is not specified then force it equal to be empty strings, so that later in the SQL query we can make a condition if it is empty or not specified (As in the overview of the WEB UI)
+  
   // Check if the Browser Token exists
   let result; 
   try {
@@ -132,18 +140,20 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
   if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
 
   // Get all for the user
-  let AllVariables, AllTokens, AllLogs;
+  let AllVariables, AllTokens, AllLogs, cnt_variables;
   try {
-    AllVariables = await MODEL.getAllVariables(result[0]['user_id']);
+    AllVariables = await MODEL.getAllVariables(result[0]['user_id'],order_by,order,(page-1)*10);
     AllTokens = await MODEL.getAllUserTokens(result[0]['user_id']);
-    AllLogs = await MODEL.getLogsCursored(result[0]['user_id']);
+    AllLogs = await MODEL.getAllLogs(result[0]['user_id']);
+    cnt_variables = await MODEL.countAllVariables(result[0]['user_id']);
+    // console.log(cnt_variables);
   // MODEL.logger("WEB", "account", result.rows[0]['user_id'], result.rows[0]['user_id'], "login");
   return res.json({ created_at: "July 15, 2023",
-                    logs: AllLogs.slice(0,10),
+                    logs: AllLogs.slice((page-1)*10,page*10), //previously .slice(0,10)
                     cnt_logs: AllLogs.length,
-                    variables: AllVariables, 
-                    cnt_variables: AllVariables.length,
-                    tokens: AllTokens,
+                    variables: AllVariables, //previously .slice(0,10)
+                    cnt_variables: cnt_variables[0].total_count,
+                    tokens: AllTokens.slice((page-1)*10,page*10), //previously .slice(0,10)
                     cnt_tokens: AllTokens.length
                   });
   } catch (SQLError) {console.log(SQLError); 
@@ -151,7 +161,7 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
   } 
 }
 
-export async function getLogs(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET VARS_C",req.body);}
+export async function getLogs(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET LOGS_C",req.body);}
   let token  = req.body.token;
   let cursor = req.body.cursor;
 
@@ -168,6 +178,211 @@ export async function getLogs(req, res) { if (Boolean(process.env.DEBUGGING)) {c
   try { 
     const Logs = await MODEL.getLogsCursored(result[0]['user_id'], cursor);
     return res.json({ logs: Logs });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function getVariables(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET VARS_C",req.body);}
+  let token  = req.body.token;
+  let cursor = req.body.cursor;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
+
+  // Get variables for the user
+  try { 
+    const Variables = await MODEL.getVariablesCursored(result[0]['user_id'], cursor);
+    return res.json({ variables: Variables });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function getTokens(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET TOKS_C",req.body);}
+  let token  = req.body.token;
+  let cursor = req.body.cursor;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
+
+  // Get tokens for the user
+  try { 
+    const Tokens = await MODEL.getTokensCursored(result[0]['user_id'], cursor);
+    return res.json({ tokens: Tokens });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function editVariable(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: EDIT VARI",req.body);}
+  let variable_id    = req.body.variable_id;
+  let variable_name  = req.body.variable_name;
+  let variable_value = req.body.variable_value;
+  let variable_type  = req.body.variable_type;
+  let variable_unit  = req.body.variable_unit;
+  let token          = req.body.token;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ error: "Unauthorized" });} 
+
+  // Validate Data
+  if (SCHEMA.DetectUndefined(variable_id,variable_name)) {
+    let nullVars = [];
+    if (variable_id === undefined) {nullVars.push("variable_id");}
+    if (variable_name === undefined) {nullVars.push("variable_name");}
+
+    return res.status(401).json({ error: "Unauthorized" }) // "All fields must be specified: "
+  }
+  if (!SCHEMA.CheckVariableIf("numeric",variable_id)) {
+    return res.status(401).json({ error: "Unauthorized" }); // "variable_id must be numeric."
+  }
+  
+  if ((variable_value === undefined) || (variable_value === "")) {variable_value="0";}
+  if (variable_unit === undefined)  {variable_unit="";}
+  if ((variable_type)) {
+    if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
+      if (!SCHEMA.CheckVariableIf(variable_type, variable_value)) {
+        return res.status(451).json({ error: "Mismatch of type and value" }); //Expectation of type mismatch
+      } 
+    } else {
+      return res.status(401).json({ error: "Unauthorized" }); // Expected types are only numeric, text, or boolean
+    }
+  } else {variable_type="text";}
+
+  // Check if the user really owns the variable 
+  const variable_found = await MODEL.findVariableNameByID(variable_id, result[0]['user_id']);
+  if (variable_found.length === 0) {
+    return res.status(401).json({ error: "Very very very Unauthorized" });
+  }
+
+  // Check if user already has the variable name
+  const variable_name_founds = await MODEL.findVariableName(variable_name, result[0]['user_id']);
+  if (variable_name_founds.length > 0) {
+    console.log(variable_name_founds);
+    let ToReturn = false;
+    variable_name_founds.forEach((variable_name_found) => {
+      if (variable_name_found.id != variable_id) {
+        console.log("Used");
+        ToReturn = true;
+        return
+      }
+    });
+    if (ToReturn) {return res.status(422).json({ error: "Unauthorized" });} //This name is used in other variables
+    console.log("not returned")
+  }
+  // Edit the variable
+  try { 
+    const variable = await MODEL.editVariable(variable_id,variable_name,variable_value,variable_type,variable_unit);
+    return res.json({ msg: "Success" , variable: variable});
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function deleteVariable(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELE VARI",req.body);}
+  let variable_id    = req.body.variable_id;
+  let token          = req.body.token;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ error: "Unauthorized" });} 
+
+  // Validate Data
+  if (SCHEMA.DetectUndefined(variable_id)) {
+    let nullVars = [];
+    if (variable_id === undefined) {nullVars.push("variable_id");}
+
+    return res.status(401).json({ error: "Unauthorized" }) // "All fields must be specified: "
+  }
+  if (!SCHEMA.CheckVariableIf("numeric",variable_id)) {
+    return res.status(401).json({ error: "Unauthorized" }); // "variable_id must be numeric."
+  }
+  
+  // Check if the user really owns the variable 
+  const variable_found = await MODEL.findVariableNameByID(variable_id, result[0]['user_id']);
+  if (variable_found.length === 0) {
+    return res.status(401).json({ error: "Very very very Unauthorized" });
+  }
+
+  // Delete the variable
+  try { 
+    const variable = await MODEL.deleteVariable(variable_id);
+    return res.json({ msg: "Success" , variable: variable});
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function addVariable(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: ADDD VARI",req.body);}
+  let variable_name  = req.body.variable_name;
+  let variable_value = req.body.variable_value;
+  let variable_type  = req.body.variable_type;
+  let variable_unit  = req.body.variable_unit;
+  let token          = req.body.token;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ error: "Unauthorized" });} 
+
+  // Validate Data
+  if (variable_name === "") {variable_name = undefined;} 
+  if (SCHEMA.DetectUndefined(variable_name)) {
+    let nullVars = [];
+    if (variable_name === undefined) {nullVars.push("variable_name");}
+
+    return res.status(452).json({ error: "Unauthorized" }) // "All fields must be specified: "
+  }
+  
+  if ((variable_value === undefined) || (variable_value === "")) {variable_value="0";}
+  if (variable_unit === undefined)  {variable_unit="";}
+  if ((variable_type)) {
+    if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
+      if (!SCHEMA.CheckVariableIf(variable_type, variable_value)) {
+        return res.status(451).json({ error: "Mismatch of type and value" }); //Expectation of type mismatch
+      } 
+    } else {
+      return res.status(401).json({ error: "Unauthorized" }); // Expected types are only numeric, text, or boolean
+    }
+  } else {variable_type="text";}
+
+  // Check if user already has the variable name
+  const variable_name_founds = await MODEL.findVariableName(variable_name, result[0]['user_id']);
+  if (variable_name_founds.length > 0) {
+    return res.status(422).json({ error: "Unauthorized" }); //This name is used in other variables
+  }
+  // Edit the variable
+  try { 
+    const variable = await MODEL.insertVariableName(result[0]['user_id'], variable_name, variable_value, variable_type, variable_unit);
+    return res.json({ msg: "Success" , variable: variable});
   } catch (SQLError) {console.log(SQLError); 
     return res.status(409).json({ error: "SQL Error" });
   }

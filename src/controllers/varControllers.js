@@ -28,7 +28,7 @@ export async function addVariable(req, res) {
 
     return res.status(409).json({ error: "These fields must be specified: " + nullVars.join(',') });
   }
-  if (value === undefined) {value="0";}
+  if ((value === undefined) || (value === "")) {value="0";}
   if (unit === undefined)  {unit="";}
   if ((variable_type)) {
     if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
@@ -99,7 +99,7 @@ export async function addVariableViaToken(req, res) {
     return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
   }
   if (unit  === undefined) {unit="";}
-  if (value === undefined) {value="0";}
+  if ((value === undefined) || (value === "")) {value="0";}
   if (variable_type) {
     if (variable_type == "numeric" || variable_type == "text" || variable_type == "boolean") {
       if (!SCHEMA.CheckVariableIf(variable_type, value)) {
@@ -366,7 +366,7 @@ export async function readVariable(req, res) {
 
   // Check if variable name exists
   if (variable_name !== undefined) {
-    const variable_name_found = await MODEL.findVariableName(variable_name, stored_user_id);
+    const variable_name_found = await MODEL.findVariableName(variable_name, stored_user_id);    
     if (variable_name_found.length < 1) {
       return res.status(409).json({ error: "Variable name not found" });
     }
