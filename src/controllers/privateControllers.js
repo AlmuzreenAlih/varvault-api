@@ -142,7 +142,7 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
   // Get all for the user
   let AllVariables, AllTokens, AllLogs, cnt_variables;
   try {
-    AllVariables = await MODEL.getAllVariables(result[0]['user_id'],order_by,order,(page-1)*10);
+    AllVariables = await MODEL.getVariables(result[0]['user_id'],order_by,order,(page-1)*10);
     AllTokens = await MODEL.getAllUserTokens(result[0]['user_id']);
     AllLogs = await MODEL.getAllLogs(result[0]['user_id']);
     cnt_variables = await MODEL.countAllVariables(result[0]['user_id']);
@@ -247,8 +247,8 @@ export async function editVariable(req, res) { if (Boolean(process.env.DEBUGGING
   // Validate Data
   if (SCHEMA.DetectUndefined(variable_id,variable_name)) {
     let nullVars = [];
-    if (variable_id === undefined) {nullVars.push("variable_id");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(variable_id))   {nullVars.push("variable_id");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
 
     return res.status(401).json({ error: "Unauthorized" }) // "All fields must be specified: "
   }
@@ -314,7 +314,7 @@ export async function deleteVariable(req, res) { if (Boolean(process.env.DEBUGGI
   // Validate Data
   if (SCHEMA.DetectUndefined(variable_id)) {
     let nullVars = [];
-    if (variable_id === undefined) {nullVars.push("variable_id");}
+    if (SCHEMA.DetectUndefined(variable_id)) {nullVars.push("variable_id");}
 
     return res.status(401).json({ error: "Unauthorized" }) // "All fields must be specified: "
   }
@@ -357,7 +357,7 @@ export async function addVariable(req, res) { if (Boolean(process.env.DEBUGGING)
   if (variable_name === "") {variable_name = undefined;} 
   if (SCHEMA.DetectUndefined(variable_name)) {
     let nullVars = [];
-    if (variable_name === undefined) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
 
     return res.status(452).json({ error: "Unauthorized" }) // "All fields must be specified: "
   }
@@ -383,6 +383,56 @@ export async function addVariable(req, res) { if (Boolean(process.env.DEBUGGING)
   try { 
     const variable = await MODEL.insertVariableName(result[0]['user_id'], variable_name, variable_value, variable_type, variable_unit);
     return res.json({ msg: "Success" , variable: variable});
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function deleteVariablesMoreThan1(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELE VARI MULT",req.body);}
+  let variable_ids   = req.body.variable_ids;
+  let token          = req.body.token;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ error: "Unauthorized" });} 
+
+  // Validate Data
+  if ((variable_ids === undefined) || (variable_ids === "")) {return res.status(401).json({ error: "Unauthorized" });}
+  if (typeof variable_ids !== 'object') {return res.status(401).json({ error: "Unauthorized" });}
+  try {
+    let ToReturn = false;
+    variable_ids.forEach(variable_id => {
+      if (!SCHEMA.CheckVariableIf("numeric",variable_id)) {
+        ToReturn = true; return// "variable_id must be numeric."
+      }
+    });
+    if (ToReturn === true) {return res.status(401).json({ error: "Unauthorized" });}
+  } catch {
+    {return res.status(401).json({ error: "Unauthorized" });}
+  }
+  
+  // Check if the user really owns the variables 
+  try {
+    for (const variable_id of variable_ids) {
+      const variable_found = await MODEL.findVariableNameByID(variable_id, result[0]['user_id']);
+      if (variable_found.length === 0) {
+        return res.status(401).json({ error: "Very very very Unauthorized" });
+      }
+    }
+  } catch {
+    {return res.status(401).json({ error: "Unauthorized4" });}
+  }
+
+  console.log(variable_ids,typeof(variable_ids))
+  // Delete the variable
+  try { 
+    await MODEL.deleteVariablesMultiple(variable_ids);;
+    return res.json({ msg: "Success" });
   } catch (SQLError) {console.log(SQLError); 
     return res.status(409).json({ error: "SQL Error" });
   }

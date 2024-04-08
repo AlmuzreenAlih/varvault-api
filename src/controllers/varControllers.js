@@ -22,9 +22,9 @@ export async function addVariable(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(username,password,variable_name)) {
     let nullVars = [];
-    if (username      === undefined) {nullVars.push("username");}
-    if (password      === undefined) {nullVars.push("password");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(username))      {nullVars.push("username");}
+    if (SCHEMA.DetectUndefined(password))      {nullVars.push("password");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
 
     return res.status(409).json({ error: "These fields must be specified: " + nullVars.join(',') });
   }
@@ -92,9 +92,9 @@ export async function addVariableViaToken(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(token,variable_name,value)) {
     let nullVars = [];
-    if (token === undefined) {nullVars.push("token");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
-    if (value         === undefined) {nullVars.push("value");}
+    if (SCHEMA.DetectUndefined(token))         {nullVars.push("token");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(value))         {nullVars.push("value");}
 
     return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
   }
@@ -157,10 +157,10 @@ export async function updateVariable(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(username,password,variable_name,value)) {
     let nullVars = [];
-    if (username      === undefined) {nullVars.push("username");}
-    if (password      === undefined) {nullVars.push("password");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
-    if (value         === undefined) {nullVars.push("value");}
+    if (SCHEMA.DetectUndefined(username))      {nullVars.push("username");}
+    if (SCHEMA.DetectUndefined(password))      {nullVars.push("password");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(value))         {nullVars.push("value");}
 
     return res.status(409).json({ error: "These fields must be specified: " + nullVars.join(',') });
   }
@@ -212,9 +212,9 @@ export async function updateVariableViaToken(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(token,variable_name,value)) {
     let nullVars = [];
-    if (token         === undefined) {nullVars.push("token");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
-    if (value         === undefined) {nullVars.push("value");}
+    if (SCHEMA.DetectUndefined(token))         {nullVars.push("token");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(value))         {nullVars.push("value");}
 
     return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
   }
@@ -299,8 +299,8 @@ export async function deleteVariableViaToken(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(token,variable_name)) {
     let nullVars = [];
-    if (token === undefined) {nullVars.push("token");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(token))         {nullVars.push("token");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
 
     return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
   }
@@ -343,9 +343,9 @@ export async function readVariable(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(username,password,variable_name)) {
     let nullVars = [];
-    if (username      === undefined) {nullVars.push("username");}
-    if (password      === undefined) {nullVars.push("password");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(username))      {nullVars.push("username");}
+    if (SCHEMA.DetectUndefined(password))      {nullVars.push("password");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
 
     return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
   }
@@ -390,8 +390,8 @@ export async function readVariableViaToken(req, res) {
   // Validate Data
   if (SCHEMA.DetectUndefined(token,variable_name)) {
     let nullVars = [];
-    if (token === undefined) {nullVars.push("token");}
-    if (variable_name === undefined) {nullVars.push("variable_name");}
+    if (SCHEMA.DetectUndefined(token))         {nullVars.push("token");}
+    if (SCHEMA.DetectUndefined(variable_name)) {nullVars.push("variable_name");}
 
     return res.status(409).json({ error: "All fields must be specified: " + nullVars.join(',') });
   }

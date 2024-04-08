@@ -88,7 +88,7 @@ export async function changeUsername(req, res) {
   // Validate the input
   if (SCHEMA.DetectUndefined(new_username)) {
     let nullVars = [];
-    if (new_username === undefined) {nullVars.push("new_username");}
+    if (SCHEMA.DetectUndefined(new_username)) {nullVars.push("new_username");}
 
     return res.status(409).json({ error: "These fields must be specified: [" + nullVars.join(',') + "]"});
   }
@@ -171,7 +171,7 @@ export async function changePassword(req, res) {
   //Validate the input
   if (SCHEMA.DetectUndefined(new_password)) {
     let nullVars = [];
-    if (new_password === undefined) {nullVars.push("new_password");}
+    if (SCHEMA.DetectUndefined(new_password)) {nullVars.push("new_password");}
 
     return res.status(409).json({ error: "These fields must be specified: [" + nullVars.join(',') + "]"});
   }

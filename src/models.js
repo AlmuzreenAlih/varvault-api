@@ -84,7 +84,16 @@ export async function selectToken(token) {
   return result.rows;
 }
 
-export async function getAllVariables(stored_user_id,order_by,order,offset) {
+export async function getAllVariables(stored_user_id) {
+  const result = await db.query(
+    "SELECT * FROM variables WHERE user_id = $1",
+    [stored_user_id]
+  );
+  
+  return result.rows;
+}
+
+export async function getVariables(stored_user_id,order_by,order,offset) {
   let result;
   if (order_by==="") {console.log("Default");
     result = await db.query(
@@ -211,4 +220,18 @@ export async function deleteVariable(id) {
   await db.query(
     "DELETE FROM variables WHERE id = $1", 
     [id]);
+}
+
+export async function deleteVariablesMultiple(ids) {
+  // Construct the placeholder string for the array of IDs
+  const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
+
+  // Construct the SQL query with the IN operator and the array of IDs
+  const query = `
+    DELETE FROM variables
+    WHERE id IN (${placeholders})
+  `;
+  
+  // Execute the query
+  await db.query(query, ids);
 }

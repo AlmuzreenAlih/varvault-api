@@ -17,7 +17,11 @@ export function validateUserData(username, password) {
 }
 
 export function DetectUndefined() {
-  for (let i = 0; i < arguments.length; i++) {if (arguments[i] === undefined) {return true;}}
+  for (let i = 0; i < arguments.length; i++) {
+    if (arguments[i] === undefined || arguments[i] === "") {
+      return true;
+    }
+  }
   return false;
 }
 
