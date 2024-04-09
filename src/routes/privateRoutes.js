@@ -15,4 +15,8 @@ privateRouter.post("/delete-variable",  privateControllers.deleteVariable);
 privateRouter.post("/add-variable",  privateControllers.addVariable); 
 privateRouter.post("/delete-multiple-variables",  privateControllers.deleteVariablesMoreThan1); 
 
+privateRouter.post("/renew-token",  privateControllers.renewToken); 
+privateRouter.post("/delete-token",  privateControllers.deleteToken); 
+privateRouter.post("/new-token",  privateControllers.addToken); 
+
 export default privateRouter;

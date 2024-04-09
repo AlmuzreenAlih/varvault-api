@@ -125,6 +125,7 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
   let page     = req.body.page;       
   let order_by = req.body.order_by;   
   let order    = req.body.order;      
+  let target    = req.body.target;      
 
   // Validate the input data
   if ((page===undefined) || (page==="")) {page=1;} else {page=Number(page)} // If page is not specified then force it equal to 1 (As in the overview of the WEB UI)
@@ -140,12 +141,19 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
   if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
 
   // Get all for the user
-  let AllVariables, AllTokens, AllLogs, cnt_variables;
+  let AllVariables, AllTokens, AllLogs, cnt_variables, cnt_tokens;
   try {
-    AllVariables = await MODEL.getVariables(result[0]['user_id'],order_by,order,(page-1)*10);
-    AllTokens = await MODEL.getAllUserTokens(result[0]['user_id']);
+    if (target === "variables") {AllVariables = await MODEL.getVariables(result[0]['user_id'],order_by,order,(page-1)*10);} 
+    else {AllVariables = await MODEL.getVariables(result[0]['user_id'],"","",(page-1)*10);}
+
+    if (target === "tokens") {AllTokens = await MODEL.getUserTokens(result[0]['user_id'],order_by,order,(page-1)*10);} 
+    else {AllTokens = await MODEL.getAllUserTokens(result[0]['user_id']);}
+
+    
     AllLogs = await MODEL.getAllLogs(result[0]['user_id']);
     cnt_variables = await MODEL.countAllVariables(result[0]['user_id']);
+    cnt_tokens = await MODEL.getAllUserTokens(result[0]['user_id']);
+    cnt_tokens = cnt_tokens.length;
     // console.log(cnt_variables);
   // MODEL.logger("WEB", "account", result.rows[0]['user_id'], result.rows[0]['user_id'], "login");
   return res.json({ created_at: "July 15, 2023",
@@ -153,8 +161,8 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
                     cnt_logs: AllLogs.length,
                     variables: AllVariables, //previously .slice(0,10)
                     cnt_variables: cnt_variables[0].total_count,
-                    tokens: AllTokens.slice((page-1)*10,page*10), //previously .slice(0,10)
-                    cnt_tokens: AllTokens.length
+                    tokens: AllTokens, //previously .slice(0,10)
+                    cnt_tokens: cnt_tokens
                   });
   } catch (SQLError) {console.log(SQLError); 
     return res.status(409).json({ error: "SQL Error" });
@@ -432,6 +440,87 @@ export async function deleteVariablesMoreThan1(req, res) { if (Boolean(process.e
   // Delete the variable
   try { 
     await MODEL.deleteVariablesMultiple(variable_ids);;
+    return res.json({ msg: "Success" });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function renewToken(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: RENEW TOKEN",req.body);}
+  let token  = req.body.token;
+  let token_id = req.body.token_id;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
+
+  // Validate Data
+  if (!SCHEMA.CheckVariableIf("numeric",token_id)) {
+    return res.status(401).json({ error: "Unauthorized" }); // "variable_id must be numeric."
+  }
+
+  MODEL.logger("WEB", "tokens", result[0]['user_id'], result[0]['user_id'], "renew");
+
+  // Renew the token for the user
+  try { 
+    await MODEL.renewUserTokenbyID(token_id);
+    return res.json({ msg: "Success" });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function deleteToken(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: RENEW TOKEN",req.body);}
+  let token  = req.body.token;
+  let token_id = req.body.token_id;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
+
+  // Validate Data
+  if (!SCHEMA.CheckVariableIf("numeric",token_id)) {
+    return res.status(401).json({ error: "Unauthorized" }); // "variable_id must be numeric."
+  }
+
+  MODEL.logger("WEB", "tokens", result[0]['user_id'], result[0]['user_id'], "delete");
+
+  // Renew the token for the user
+  try { 
+    await MODEL.deleteToken(token_id);
+    return res.json({ msg: "Success" });
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+}
+
+export async function addToken(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: NEW TOKEN",req.body);}
+  let token  = req.body.token;
+
+  // Check if the Browser Token exists
+  let result; 
+  try {
+    result = await MODEL.findBrowserToken(token); 
+  } catch (SQLError) {console.log(SQLError); 
+    return res.status(409).json({ error: "SQL Error" });
+  }
+  if (result.length === 0) {return res.status(401).json({ authenticated: false });} 
+
+  MODEL.logger("WEB", "tokens", result[0]['user_id'], result[0]['user_id'], "new");
+
+  // Add a new generated token for the user
+  try { 
+    await MODEL.insertGeneratedToken(result[0]['user_id']);
     return res.json({ msg: "Success" });
   } catch (SQLError) {console.log(SQLError); 
     return res.status(409).json({ error: "SQL Error" });

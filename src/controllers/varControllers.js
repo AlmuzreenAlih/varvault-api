@@ -115,7 +115,7 @@ export async function addVariableViaToken(req, res) {
   if ((stored_token.length < 1)) {
     return res.status(409).json({ error: "Token not found" });
   }
-  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].created_at);
+  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].updated_at);
   if (elapsedTime.days >= 30) {
     return res.status(401).json({ error: "Token expired ", elapsedTime});
   }
@@ -224,7 +224,7 @@ export async function updateVariableViaToken(req, res) {
   if ((stored_token.length < 1)) {
     return res.status(409).json({ error: "Token not found" });
   }
-  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].created_at);
+  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].updated_at);
   if (elapsedTime.days >= 30) {
     return res.status(401).json({ error: "Token expired ", elapsedTime});
   }
@@ -310,7 +310,7 @@ export async function deleteVariableViaToken(req, res) {
   if ((stored_token.length < 1)) {
     return res.status(409).json({ error: "Token not found" });
   }
-  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].created_at);
+  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].updated_at);
   if (elapsedTime.days >= 30) {
     return res.status(401).json({ error: "Token expired ", elapsedTime});
   }
@@ -401,7 +401,7 @@ export async function readVariableViaToken(req, res) {
   if ((stored_token.length < 1)) {
     return res.status(409).json({ error: "Token not found" });
   }
-  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].created_at);
+  const elapsedTime = TIMEUTILS.calculateTimeElapsed(stored_token[0].updated_at);
   if (elapsedTime.days >= 30) {
     return res.status(401).json({ error: "Token expired ", elapsedTime});
   }

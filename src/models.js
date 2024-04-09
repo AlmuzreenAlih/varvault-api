@@ -15,7 +15,7 @@ export async function insertUser(username, hashedPassword) {
 }
 export async function insertVariableName(stored_user_id, variable_name, value, variable_type, unit) {
   db.query(
-    "INSERT INTO variables (user_id, variable_name, value, variable_type,unit,updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)",
+    "INSERT INTO variables (user_id, variable_name, value, variable_type,unit,created_at,updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
     [stored_user_id, variable_name, value, variable_type, unit]
   );
 }
@@ -95,7 +95,7 @@ export async function getAllVariables(stored_user_id) {
 
 export async function getVariables(stored_user_id,order_by,order,offset) {
   let result;
-  if (order_by==="") {console.log("Default");
+  if (order_by==="") {
     result = await db.query(
       "SELECT * FROM variables WHERE user_id = $1 ORDER BY id ASC LIMIT 10 OFFSET $2",
       [stored_user_id,offset]
@@ -120,6 +120,28 @@ export async function countAllVariables(stored_user_id) {
       [stored_user_id]
     );
   }
+  return result.rows;
+}
+
+export async function getUserTokens(stored_user_id,order_by,order,offset) {
+  let result;
+  console.log(order_by,order,offset)
+  if (order_by==="") {
+    result = await db.query(
+      "SELECT * FROM tokens WHERE user_id = $1  ORDER BY id ASC LIMIT 10 OFFSET $2",
+      [stored_user_id,offset]
+    );
+  } else {
+    let orderByClause = "";
+    if (order === "true") {order = "ASC";} else {order = "DESC";}
+    orderByClause = `ORDER BY ${order_by} ${order}`;
+    console.log(`SELECT * FROM tokens WHERE user_id = $1 ${orderByClause} LIMIT 10 OFFSET $2`)
+    result = await db.query(
+      `SELECT * FROM tokens WHERE user_id = $1 ${orderByClause} LIMIT 10 OFFSET $2`,
+      [stored_user_id,offset]
+    );
+  }
+  
   return result.rows;
 }
 
@@ -200,8 +222,13 @@ export async function updateUserPassword(id,pw) {
 }
 export async function renewUserToken(token) {
   await db.query(
-    "UPDATE tokens SET created_at = CURRENT_TIMESTAMP WHERE token = $1", 
+    "UPDATE tokens SET updated_at = CURRENT_TIMESTAMP WHERE token = $1", 
     [token]);
+}
+export async function renewUserTokenbyID(token_id) {
+  await db.query(
+    "UPDATE tokens SET updated_at = CURRENT_TIMESTAMP WHERE id = $1", 
+    [token_id]);
 }
 export async function updateVariable(id,value) {
   await db.query(
@@ -221,7 +248,6 @@ export async function deleteVariable(id) {
     "DELETE FROM variables WHERE id = $1", 
     [id]);
 }
-
 export async function deleteVariablesMultiple(ids) {
   // Construct the placeholder string for the array of IDs
   const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
@@ -234,4 +260,9 @@ export async function deleteVariablesMultiple(ids) {
   
   // Execute the query
   await db.query(query, ids);
+}
+export async function deleteToken(id) {
+  await db.query(
+    "DELETE FROM tokens WHERE id = $1", 
+    [id]);
 }
