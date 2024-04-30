@@ -79,3 +79,15 @@ $(document).ready(function() {
     }
   }
 )
+
+$("#show-button").on( "click", function() {
+  if ($('#sidebar').css('left') == '0px') {
+    $('#show-button-char').html('navigate_next');
+    $('#sidebar').css('left', '-55%');
+    $('#show-button-char').css('width', '32px');
+  } else {
+    $('#sidebar').css('left', '0%');
+    $('#show-button-char').html('navigate_before');
+    $('#show-button-char').css('width', '32px');
+  }
+});

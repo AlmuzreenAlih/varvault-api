@@ -55,6 +55,7 @@
             <a href="/tuts-rasperry-pi"     class="<%= activeTab === 'rasp' ? 'active' : '' %>">VarVault + Raspberry pi</a>
             <!-- <a href="/https-b4A"            class="<%= activeTab === 'basi' ? 'active' : '' %>">VarVault + B4A</a> -->
         </article>
+        <button id="show-button"><i id="show-button-char" class="material-icons">navigate_next</i></button>
         <article id="content">
             <% if (activeTab === 'ovrv') { %>
                 <%- include('GettingStarted/overview') %>

@@ -13,10 +13,8 @@ html {
     font-size: 16px;
 }
 
-$mobile_size: 1000px;
-$mobile_factor: 1;
 @mixin mobile {
-    @media (max-width: $mobile_size) {
+    @media (max-width: 1000px) {
         @content;
     }
 }
@@ -195,6 +193,7 @@ body {
             align-items: center;
             justify-content: center;
             margin-right: 20px;
+            @include mobile { margin-left: 20px; }
             svg {
                 color: var(--text_color_title);
                 height: 22px;
@@ -203,11 +202,12 @@ body {
     }
     #sidebar {
         background-color: var(--color_mode);
-
+        transition: left 1s linear;
         position: fixed;
         z-index: 1;
         top: 48px; left: 0;
         width: 20%;
+        @include mobile { left: -55%; width: 55%; }
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -218,7 +218,7 @@ body {
         
         border: 2px solid var(--color_contrast);
 
-        overflow: auto;
+        overflow-y: auto;
         strong {
             margin-top: 5px;
             padding: 7px;
@@ -229,6 +229,28 @@ body {
             width: 100%;
             padding: 7px;
             padding-inline: 25px;
+        }
+        
+    }
+    #show-button {
+        position: fixed;
+        bottom: 20px; left: -8px;
+        padding-left:4px;
+        padding-block: 2px;
+        z-index: 500;
+
+        border: 0px solid #888;
+        border-radius: 8px;
+        box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
+        background-color:var(--color_theme2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        @include mobile { visibility: visible; }
+        i {
+            font-size: 2rem;
+            color: white;
         }
     }
     #content {
@@ -247,9 +269,13 @@ body {
         flex-direction: column;
         // border: 2px solid rgb(46, 46, 46);
         overflow: auto;
+        @include mobile { 
+            padding-top: 20px;
+            padding-left: 0%;
+        }
         .content {
             // background-color: #00A67D;
-            padding-inline: 75px;
+            padding-inline: 30px;
             padding-top: 50px;
             position: relative;
 
@@ -278,6 +304,7 @@ body {
                 background-color: transparent;
                 border-radius: 8px;
                 width: 100%;
+                position: relative;
                 .httplinkbody {
                     background-color: transparent;
                     display: flex;
@@ -295,9 +322,17 @@ body {
                         border-bottom-left-radius: 2px;
                         font-weight: 700;
                         margin-right: 5px;
+
+                        @include mobile { height: 100%; }
+                        background-color: transparent;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                     div:nth-child(2) {
                         width: 100%;
+                        overflow-x: hidden;
+                        white-space: nowrap;
                     }
                     .copy {
                         width: 10%;
@@ -448,6 +483,7 @@ body {
         
                 overflow: hidden;
                 width:50vw;
+
                 // min-width: fit-content;
                 border: 0px;
                 border-radius: 10px;
@@ -455,6 +491,7 @@ body {
                 padding: 0;
         
                 position: relative;
+                @include mobile { margin-inline: 0; width: 100%; }
                 h1 {
                     font-size: $font_paragraph;
                     background-color: var(--color_headers);
