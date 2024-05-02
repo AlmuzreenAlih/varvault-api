@@ -5,14 +5,14 @@
     <section class="httplink linkpost">
         <span class="httplinkbody">
             <div>POST</div>
-            <div>www.varvault.com/user/register</div>
+            <div><%= process.env.WINDOW %>/user/register</div>
             <i class="material-icons copy post">content_copy</i>
         </span>
         
     </section>
     
     <h3>Request Body Parameters</h3>
-    <section class="table tc113 tr111">
+    <section class="table tc113 ">
         <div class="thead">Parameter</div>
         <div class="thead">Type</div>
         <div class="thead">Description</div>
@@ -73,7 +73,7 @@
     <section class="httplink linkpatch">
         <span class="httplinkbody">
             <div>PATCH</div>
-            <div>www.varvault.com/user/change-username</div>
+            <div><%= process.env.WINDOW %>/user/change-username</div>
             <i class="material-icons copy">content_copy</i>
         </span>
         
@@ -81,7 +81,7 @@
     
     <h3>Authorization Header</h3>
     <p>This endpoint uses Basic Authentication for the changing of account's username.</p>
-    <section class="table tc113 tr111">
+    <section class="table tc113 ">
         <div class="thead">Parameter</div>
         <div class="thead">Type</div>
         <div class="thead">Description</div>
@@ -124,7 +124,7 @@
     <section class="httplink linkpatch">
         <span class="httplinkbody">
             <div>PATCH</div>
-            <div>www.varvault.com/user/change-password</div>
+            <div><%= process.env.WINDOW %>/user/change-password</div>
             <i class="material-icons copy">content_copy</i>
         </span>
         
@@ -132,7 +132,7 @@
     
     <h3>Authorization Header</h3>
     <p>This endpoint uses Basic Authentication for the changing of account's password.</p>
-    <section class="table tc113 tr111">
+    <section class="table tc113 ">
         <div class="thead">Parameter</div>
         <div class="thead">Type</div>
         <div class="thead">Description</div>

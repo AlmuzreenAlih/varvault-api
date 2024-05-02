@@ -68,7 +68,7 @@ export async function genToken(req, res) {
   //Insert Generated Token
   try {
     const returnedtoken = await MODEL.insertGeneratedToken(stored_user_id);
-    return res.json({message: "Token generated for " + username, token: returnedtoken, expires_in: "30 days"});
+    return res.json({message: "Token generated for " + username, token: returnedtoken['token'], expires_in: "30 days"});
   } catch (SQLError) { console.log(SQLError);
     return res.status(409).json({ error: "SQL error inserting token" });
   }

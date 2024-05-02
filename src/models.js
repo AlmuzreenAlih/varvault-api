@@ -1,5 +1,5 @@
 import TokenGenerator from 'token-generator';
-import db from '../configuration/dbConfig.js'
+import connection from '../configuration/dbConfig.js'
 
 const tokenGenerator = new TokenGenerator({
   salt: 'your secret ingredient for this magic recipe.',
@@ -7,51 +7,66 @@ const tokenGenerator = new TokenGenerator({
 });
 
 //CREATE
-export async function insertUser(username, hashedPassword) {
-  const result = await db.query(
-    "INSERT INTO users (us, pw) VALUES ($1, $2) RETURNING id, us", 
-    [username, hashedPassword]);
-  return result.rows;
+export async function insertUser(username, hashedPassword) { 
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "INSERT INTO users (us, pw, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)", 
+      [username, hashedPassword], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve({id: results['insertId']})}}
+    );
+  });
 }
+// insertUser("hellogello", "Gfdhgfdhgfd");
 export async function insertVariableName(stored_user_id, variable_name, value, variable_type, unit) {
-  const result = await db.query(
-    "INSERT INTO variables (user_id, variable_name, value, variable_type,unit,created_at,updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id",
-    [stored_user_id, variable_name, value, variable_type, unit]
-  );
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "INSERT INTO variables (user_id, variable_name, value, variable_type, unit, created_at, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", 
+      [stored_user_id, variable_name, value, variable_type, unit], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve({id: results['insertId']});}}
+    );
+  });
 }
+// console.log(await insertVariableName(44, "Dummy", "haha", "0", "numeric"))
 export async function insertGeneratedToken(stored_user_id) {
   var token = tokenGenerator.generate();
-  const result = await db.query(
-    "INSERT INTO tokens (user_id, token, created_at, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id",
-    [stored_user_id, token]
-  );
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "INSERT INTO tokens (user_id, token, created_at, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+      [stored_user_id, token], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve({id: results['insertId'], token: token});}}
+    );
+  });
 }
-
+// console.log(await insertGeneratedToken(42))
 export async function insertGeneratedBrowserToken(stored_user_id, token) {
-  db.query(
-    "INSERT INTO browser_tokens (user_id, token) VALUES ($1, $2)",
-    [stored_user_id, token]
-  );
-  return token;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "INSERT INTO browser_tokens (user_id, token, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
+      [stored_user_id, token], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(token)}}
+    );
+  });
 }
 
 export async function logger(gateway, category, user_id, pointing_id, operation) {
-  var token = tokenGenerator.generate();
-  db.query(
-    "INSERT INTO logs (gateway, category, user_id, pointing_id, operation) VALUES ($1, $2, $3, $4, $5)",
-    [gateway, category, user_id, pointing_id, operation]
-  );
-  return token;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "INSERT INTO logs (gateway, category, user_id, pointing_id, operation, created_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+      [gateway, category, user_id, pointing_id, operation], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 
 //READ
 export async function selectUserByUsername(username) {
-  const result = await db.query(
-    "SELECT * FROM users WHERE us = $1", 
-    [username]);
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM users WHERE us = ?", 
+      [username], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function selectUserByID(id) {
   const result = await db.query(
@@ -60,17 +75,22 @@ export async function selectUserByID(id) {
   return result.rows;
 }
 export async function getUserCreation(id) {
-  const result = await db.query(
-    "SELECT * FROM users WHERE id = $1", 
-    [id]);
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM users WHERE id = ?", 
+      [id], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function findVariableName(variable_name,stored_user_id) {
-  const result = await db.query(
-    "SELECT * FROM variables WHERE user_id = $1 AND variable_name = $2",
-    [stored_user_id, variable_name]
-  );
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM variables WHERE user_id = ? AND variable_name = ?",
+      [stored_user_id, variable_name], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 
 export async function findVariableNameByID(variable_id,stored_user_id) {
@@ -88,11 +108,13 @@ export async function selectTokenByID(token_id,stored_user_id) {
   return result.rows;
 }
 export async function findBrowserToken(token) {
-  const result = await db.query(
-    "SELECT * FROM browser_tokens WHERE token = $1", 
-    [token]);
-
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM browser_tokens WHERE token = ?", 
+      [token], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 
 export async function selectToken(token) {
@@ -113,89 +135,102 @@ export async function getAllVariables(stored_user_id) {
 }
 
 export async function getVariables(stored_user_id,order_by,order,offset, search) {
-  let result;
   if (order_by==="") {
-    result = await db.query(
-      "SELECT * FROM variables WHERE user_id = $1 AND variable_name ILIKE '%' || $2 || '%' ORDER BY id ASC LIMIT 10 OFFSET $3",
-      [stored_user_id,search,offset]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM variables WHERE user_id = ? AND variable_name LIKE ? ORDER BY id ASC LIMIT 10 OFFSET ?",
+        [stored_user_id, '%' + search + '%', offset], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   } else {
     let orderByClause = "";
     if (order === "true") {order = "ASC";} else {order = "DESC";}
     orderByClause = `ORDER BY ${order_by} ${order}`;
-    result = await db.query(
-      `SELECT * FROM variables WHERE user_id = $1 AND variable_name ILIKE '%' || $2 || '%' ${orderByClause} LIMIT 10 OFFSET $3`,
-      [stored_user_id,search,offset]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM variables WHERE user_id = ? AND variable_name LIKE ? ${orderByClause} LIMIT 10 OFFSET ?`,
+        [stored_user_id, '%' + search + '%',offset], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
-  return result.rows;
 }
 
 export async function countAllVariables(stored_user_id,search) {
-  let result;
-  if (true) {
-    result = await db.query(
-      "SELECT COUNT(*) AS total_count FROM variables WHERE user_id = $1 AND variable_name ILIKE '%' || $2 || '%'",
-      [stored_user_id, search]
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT COUNT(*) AS total_count FROM variables WHERE user_id = ? AND variable_name LIKE ?",
+      [stored_user_id, '%' + search + '%'], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
     );
-  }
-  return result.rows;
+  });
 }
 
 export async function countAllTokens(stored_user_id) {
-  let result;
-  if (true) {
-    result = await db.query(
-      "SELECT COUNT(*) AS total_count FROM tokens WHERE user_id = $1",
-      [stored_user_id]
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT COUNT(*) AS total_count FROM tokens WHERE user_id = ?",
+      [stored_user_id], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
     );
-  }
-  return result.rows;
+  });
 }
 
 export async function countAllLogs(stored_user_id, startDate, endDate, category) {
-  let result;
   if (startDate) {
     if (category) {
-      result = await db.query(
-        "SELECT COUNT(*) AS total_count FROM logs WHERE user_id = $1 AND created_at >= $2 AND created_at <= $3 AND category ILIKE $4",
-        [stored_user_id, startDate, endDate, category]
-      );
+      return new Promise((resolve, reject) => {
+        connection.query(
+          "SELECT COUNT(*) AS total_count FROM logs WHERE user_id = ? AND created_at >= ? AND created_at <= ? AND category ILIKE ?",
+          [stored_user_id, startDate, endDate, category], 
+          (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+        );
+      });
     } else {console.log("no cat");
-      result = await db.query(
-        "SELECT COUNT(*) AS total_count FROM logs WHERE user_id = $1 AND created_at >= $2 AND created_at <= $3",
-        [stored_user_id, startDate, endDate]
-      );
+      return new Promise((resolve, reject) => {
+        connection.query(
+          "SELECT COUNT(*) AS total_count FROM logs WHERE user_id = ? AND created_at >= ? AND created_at <= ?",
+          [stored_user_id, startDate, endDate], 
+          (error, results, fields) => {  if (error) {reject(error);}   else {resolve(results)}  }
+        );
+      });
     }
   } else {
-    result = await db.query(
-      "SELECT COUNT(*) AS total_count FROM logs WHERE user_id = $1",
-      [stored_user_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT COUNT(*) AS total_count FROM logs WHERE user_id = ?",
+        [stored_user_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
-  return result.rows;
 }
 
 export async function getUserTokens(stored_user_id,order_by,order,offset) {
   let result;
   console.log(order_by,order,offset)
   if (order_by==="") {
-    result = await db.query(
-      "SELECT * FROM tokens WHERE user_id = $1  ORDER BY id ASC LIMIT 10 OFFSET $2",
-      [stored_user_id,offset]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM tokens WHERE user_id = ?  ORDER BY id ASC LIMIT 10 OFFSET ?",
+        [stored_user_id,offset], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   } else {
     let orderByClause = "";
     if (order === "true") {order = "ASC";} else {order = "DESC";}
     orderByClause = `ORDER BY ${order_by} ${order}`;
-    console.log(`SELECT * FROM tokens WHERE user_id = $1 ${orderByClause} LIMIT 10 OFFSET $2`)
-    result = await db.query(
-      `SELECT * FROM tokens WHERE user_id = $1 ${orderByClause} LIMIT 10 OFFSET $2`,
-      [stored_user_id,offset]
-    );
+
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM tokens WHERE user_id = ? ${orderByClause} LIMIT 10 OFFSET ?`,
+        [stored_user_id,offset], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
-  
-  return result.rows;
 }
 
 export async function getAllUserTokens(stored_user_id) {
@@ -207,25 +242,33 @@ export async function getAllUserTokens(stored_user_id) {
 }
 
 export async function getAllLogs(stored_user_id) {
-  const result = await db.query(
-    "SELECT * FROM logs WHERE user_id = $1 ORDER BY id DESC",
-    [stored_user_id]
-  );
-  return result.rows;
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM logs WHERE user_id = ? ORDER BY id DESC",
+      [stored_user_id], 
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  })
 }
 
 export async function getLogs(stored_user_id, startDate, endDate, category) {
   let result;
   if (category) {
-    result = await db.query(
-      "SELECT * FROM logs WHERE user_id = $1 AND created_at >= $2 AND created_at <= $3 AND category ILIKE $4 ORDER BY id DESC",
-      [stored_user_id, startDate, endDate, category]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM logs WHERE user_id = ? AND created_at >= ? AND created_at <= ? AND category ILIKE ? ORDER BY id DESC",
+        [stored_user_id, startDate, endDate, category], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   } else {
-    result = await db.query(
-      "SELECT * FROM logs WHERE user_id = $1 AND created_at >= $2 AND created_at <= $3 ORDER BY id DESC",
-      [stored_user_id, startDate, endDate]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM logs WHERE user_id = ? AND created_at >= ? AND created_at <= ? ORDER BY id DESC",
+        [stored_user_id, startDate, endDate], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
   return result.rows;
 }
@@ -233,31 +276,42 @@ export async function getLogs(stored_user_id, startDate, endDate, category) {
 export async function getLogsCursored(stored_user_id,cursor_id) {
   let result;
   if (cursor_id === undefined) {
-    result = await db.query(
-      "SELECT * FROM logs WHERE user_id = $1 ORDER BY id DESC",
-      [stored_user_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM logs WHERE user_id = ? ORDER BY id DESC",
+        [stored_user_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   } else {
-    result = await db.query(
-      "SELECT * FROM logs WHERE user_id = $1 AND id < $2 ORDER BY id DESC LIMIT 10",
-      [stored_user_id,cursor_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM logs WHERE user_id = ? AND id < ? ORDER BY id DESC LIMIT 10",
+        [stored_user_id,cursor_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
-  return result.rows;
 }
 
 export async function getVariablesCursored(stored_user_id,cursor_id) {
   let result;
   if (cursor_id === undefined) {
-    result = await db.query(
-      "SELECT * FROM variables WHERE user_id = $1 ORDER BY id ASC",
-      [stored_user_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM variables WHERE user_id = ? ORDER BY id ASC",
+        [stored_user_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   } else {
-    result = await db.query(
-      "SELECT * FROM variables WHERE user_id = $1 AND id > $2 ORDER BY id ASC LIMIT 10",
-      [stored_user_id,cursor_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM variables WHERE user_id = ? AND id > ? ORDER BY id ASC LIMIT 10",
+        [stored_user_id,cursor_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
   return result.rows;
 }
@@ -265,86 +319,125 @@ export async function getVariablesCursored(stored_user_id,cursor_id) {
 export async function getTokensCursored(stored_user_id,cursor_id) {
   let result;
   if (cursor_id === undefined) {
-    result = await db.query(
-      "SELECT * FROM tokens WHERE user_id = $1 ORDER BY id ASC",
-      [stored_user_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM tokens WHERE user_id = ? ORDER BY id ASC",
+        [stored_user_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   } else {
-    result = await db.query(
-      "SELECT * FROM tokens WHERE user_id = $1 AND id > $2 ORDER BY id ASC LIMIT 10",
-      [stored_user_id,cursor_id]
-    );
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM tokens WHERE user_id = ? AND id > ? ORDER BY id ASC LIMIT 10",
+        [stored_user_id,cursor_id], 
+        (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+      );
+    });
   }
-  return result.rows;
 }
 
 //UPDATE
 export async function updateUserUsername(id,us) {
-  await db.query(
-    "UPDATE users SET us = $1 WHERE id = $2", 
-    [us,id]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "UPDATE users SET us = ? WHERE id = ?", 
+      [us,id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function updateUserPassword(id,pw) {
-  await db.query(
-    "UPDATE users SET pw = $1 WHERE id = $2", 
-    [pw,id]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "UPDATE users SET pw = ? WHERE id = ?", 
+      [pw,id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function renewUserToken(token) {
-  await db.query(
-    "UPDATE tokens SET updated_at = CURRENT_TIMESTAMP WHERE token = $1", 
-    [token]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "UPDATE tokens SET updated_at = CURRENT_TIMESTAMP WHERE token = ?", 
+      [token],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function renewUserTokenbyID(token_id) {
-  await db.query(
-    "UPDATE tokens SET updated_at = CURRENT_TIMESTAMP WHERE id = $1", 
-    [token_id]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "UPDATE tokens SET updated_at = CURRENT_TIMESTAMP WHERE id = ?", 
+      [token_id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function updateVariable(id,value) {
-  await db.query(
-    "UPDATE variables SET value = $1 WHERE id = $2", 
-    [value,id]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "UPDATE variables SET value = ?, updated_at=CURRENT_TIMESTAMP WHERE id = ?", 
+      [value,id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function editVariable(id,name,value,type,unit) {
-  const result = await db.query(
-    "UPDATE variables SET variable_name=$1, value=$2, variable_type=$3, unit=$4, updated_at=CURRENT_TIMESTAMP WHERE id=$5 RETURNING *", 
-    [name,value,type,unit,id]);
-
-  return result.rows;
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "UPDATE variables SET variable_name=?, value=?, variable_type=?, unit=?, updated_at=CURRENT_TIMESTAMP WHERE id=? RETURNING *", 
+      [name,value,type,unit,id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
+
 //DELETE
 export async function deleteVariable(id) {
-  await db.query(
-    "DELETE FROM variables WHERE id = $1", 
-    [id]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "DELETE FROM variables WHERE id = ?", 
+      [id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function deleteVariablesMultiple(ids) {
-  // Construct the placeholder string for the array of IDs
-  const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
-
-  // Construct the SQL query with the IN operator and the array of IDs
+  const placeholders = ids.map((_, index) => `?`).join(', ');
   const query = `
     DELETE FROM variables
     WHERE id IN (${placeholders})
   `;
   
   // Execute the query
-  await db.query(query, ids);
+  return new Promise((resolve,reject) => {
+    connection.query(query, ids,
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
 export async function deleteTokensMultiple(ids) {
-  // Construct the placeholder string for the array of IDs
-  const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
-
-  // Construct the SQL query with the IN operator and the array of IDs
+  const placeholders = ids.map((_, index) => `?`).join(', ');
   const query = `
     DELETE FROM tokens
     WHERE id IN (${placeholders})
   `;
   
   // Execute the query
-  await db.query(query, ids);
+  return new Promise((resolve,reject) => {
+    connection.query(query, ids,
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }
+
 export async function deleteToken(id) {
-  await db.query(
-    "DELETE FROM tokens WHERE id = $1", 
-    [id]);
+  return new Promise((resolve,reject) => {
+    connection.query(
+      "DELETE FROM tokens WHERE id = ?", 
+      [id],
+      (error, results, fields) => {if (error) {reject(error);} else {resolve(results)}}
+    );
+  });
 }

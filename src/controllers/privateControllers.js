@@ -8,9 +8,13 @@ const tokenGenerator = new TokenGenerator({
   salt: 'your secret ingredient for this magic recipe.',
   timestampMap: 'abcdefghij', // 10 chars array for obfuscation purposes
 });
-
-export async function login(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: LOGIN",req.body);}
-    let username    =   req.body.username;
+function CorsOptions(res) {
+  // console.log("10haha");
+  res.set('Access-Control-Allow-Origin', process.env.ALLOW);
+}
+export async function login(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: LOGIN",req.body);}
+  CorsOptions(res);  
+  let username    =   req.body.username;
     let password    =   req.body.password;
   
     // Check if username is in the database
@@ -46,7 +50,8 @@ export async function login(req, res) { if (Boolean(process.env.DEBUGGING)) {con
     return res.json({authenticated: true, token: token});
 }
 
-export async function register(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: REGISTER",req.body);}
+export async function register(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: REGISTER",req.body);}
+  CorsOptions(res);
   let username    =   req.body.username;
   let password    =   req.body.password;
 
@@ -78,8 +83,8 @@ export async function register(req, res) { if (Boolean(process.env.DEBUGGING)) {
   // Insert the browser token
   var token = tokenGenerator.generate();
   try {
-    MODEL.insertGeneratedBrowserToken(user[0].id, token);
-    MODEL.logger("WEB", "account", user[0].id, user[0].id, "register");
+    MODEL.insertGeneratedBrowserToken(user['id'], token);
+    MODEL.logger("WEB", "account", user['id'], user['id'], "register");
   } catch (SQLError) { console.log(SQLError);
     return res.status(400).json({ error: "SQL Error" });
   }
@@ -87,7 +92,9 @@ export async function register(req, res) { if (Boolean(process.env.DEBUGGING)) {
   return res.json({authenticated: true, token: token});
 }
 
-export async function usernameChecker(req, res) {console.log("Debug: USERNAME CHECK",req.body);
+export async function usernameChecker(req, res) {//if (Boolean(process.env.DEBUGGING)) {console.log("Debug: US Check",req.body);}
+    CorsOptions(res);
+
     let username    =   req.body.username;
 
     // Check if the username already exists
@@ -102,7 +109,8 @@ export async function usernameChecker(req, res) {console.log("Debug: USERNAME CH
     return res.json({ availability: true });
 }
 
-export async function auth(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: AUTH",req.body);}
+export async function auth(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: AUTH",req.body);}
+  CorsOptions(res);
   let token = req.body.token;
 
   // Check if the Browser Token exists
@@ -119,7 +127,8 @@ export async function auth(req, res) { if (Boolean(process.env.DEBUGGING)) {cons
   }
 }
 
-export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET ALL",req.body);}
+export async function getAll(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET ALL",req.body);}
+  CorsOptions(res);
   let token    = req.body.token;
   let page      = req.body.page;       
   let order_by  = req.body.order_by;   
@@ -156,12 +165,13 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
       AllVariables = await MODEL.getVariables(result[0]['user_id'],"","",(page-1)*10,search);
       cnt_variables = await MODEL.countAllVariables(result[0]['user_id'],search);
     }
-
+    
     if (target === "tokens") {AllTokens = await MODEL.getUserTokens(result[0]['user_id'],order_by,order,(page-1)*10);} 
     else {AllTokens = await MODEL.getUserTokens(result[0]['user_id'],"","",(page-1)*10);}
 
     created_at = await MODEL.getUserCreation(result[0]['user_id']);
     created_at = created_at[0]['created_at'];
+    cnt_tokens = await MODEL.countAllTokens(result[0]['user_id']);
     
     if (target === "Logs") {
       AllLogs = await MODEL.getLogs(result[0]['user_id'],startDate, endDate, category);
@@ -171,10 +181,6 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
       AllLogs = await MODEL.getAllLogs(result[0]['user_id']);
       cnt_logs = await MODEL.countAllLogs(result[0]['user_id']);
     }
-
-    cnt_tokens = await MODEL.countAllTokens(result[0]['user_id']);
-
-    // console.log(cnt_variables, cnt_tokens, cnt_logs);
 
   return res.json({ created_at: created_at,
                     logs: AllLogs.slice((page-1)*10,page*10), //previously .slice(0,10)
@@ -189,7 +195,8 @@ export async function getAll(req, res) { if (Boolean(process.env.DEBUGGING)) {co
   } 
 }
 
-export async function getLogs(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET LOGS_CURSORED",req.body);}
+export async function getLogs(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET LOGS_CURSORED",req.body);}
+  CorsOptions(res);
   let token  = req.body.token;
   let cursor = req.body.cursor;
 
@@ -211,7 +218,8 @@ export async function getLogs(req, res) { if (Boolean(process.env.DEBUGGING)) {c
   }
 }
 
-export async function getVariables(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET VARS_CURSORED",req.body);}
+export async function getVariables(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET VARS_CURSORED",req.body);}
+  CorsOptions(res);
   let token  = req.body.token;
   let cursor = req.body.cursor;
 
@@ -233,7 +241,8 @@ export async function getVariables(req, res) { if (Boolean(process.env.DEBUGGING
   }
 }
 
-export async function getTokens(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET TOKS_CURSORED",req.body);}
+export async function getTokens(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: GET TOKS_CURSORED",req.body);}
+  CorsOptions(res);
   let token  = req.body.token;
   let cursor = req.body.cursor;
 
@@ -255,7 +264,8 @@ export async function getTokens(req, res) { if (Boolean(process.env.DEBUGGING)) 
   }
 }
 
-export async function editVariable(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: EDIT VARIABLE",req.body);}
+export async function editVariable(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: EDIT VARIABLE",req.body);}
+  CorsOptions(res);
   let variable_id    = req.body.variable_id;
   let variable_name  = req.body.variable_name;
   let variable_value = req.body.variable_value;
@@ -327,7 +337,8 @@ export async function editVariable(req, res) { if (Boolean(process.env.DEBUGGING
   }
 }
 
-export async function deleteVariable(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELETE VARIABLE",req.body);}
+export async function deleteVariable(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELETE VARIABLE",req.body);}
+  CorsOptions(res);
   let variable_id    = req.body.variable_id;
   let token          = req.body.token;
 
@@ -367,7 +378,8 @@ export async function deleteVariable(req, res) { if (Boolean(process.env.DEBUGGI
   }
 }
 
-export async function addVariable(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: ADDD VARIABLE",req.body);}
+export async function addVariable(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: ADDD VARIABLE",req.body);}
+  CorsOptions(res);
   let variable_name  = req.body.variable_name;
   let variable_value = req.body.variable_value;
   let variable_type  = req.body.variable_type;
@@ -412,14 +424,15 @@ export async function addVariable(req, res) { if (Boolean(process.env.DEBUGGING)
   // Add the variable
   try { 
     const variable = await MODEL.insertVariableName(result[0]['user_id'], variable_name, variable_value, variable_type, variable_unit);
-    MODEL.logger("WEB", "variables", result[0]['user_id'], variable[0]['id'], "add");
+    MODEL.logger("WEB", "variables", result[0]['user_id'], variable['id'], "add");
     return res.json({ msg: "Success" , variable: variable});
   } catch (SQLError) {console.log(SQLError); 
     return res.status(409).json({ error: "SQL Error" });
   }
 }
 
-export async function deleteVariablesMoreThan1(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELETE MULTIPLE VARIABLES",req.body);}
+export async function deleteVariablesMoreThan1(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELETE MULTIPLE VARIABLES",req.body);}
+  CorsOptions(res);
   let variable_ids = req.body.variable_ids;
   let token        = req.body.token;
 
@@ -471,7 +484,8 @@ export async function deleteVariablesMoreThan1(req, res) { if (Boolean(process.e
   }
 }
 
-export async function renewToken(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: RENEW TOKEN",req.body);}
+export async function renewToken(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: RENEW TOKEN",req.body);}
+  CorsOptions(res);
   let token  = req.body.token;
   let token_id = req.body.token_id;
 
@@ -499,7 +513,8 @@ export async function renewToken(req, res) { if (Boolean(process.env.DEBUGGING))
   }
 }
 
-export async function deleteToken(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: RENEW TOKEN",req.body);}
+export async function deleteToken(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: RENEW TOKEN",req.body);}
+  CorsOptions(res);
   let token  = req.body.token;
   let token_id = req.body.token_id;
 
@@ -527,7 +542,8 @@ export async function deleteToken(req, res) { if (Boolean(process.env.DEBUGGING)
   }
 }
 
-export async function addToken(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: NEW TOKEN",req.body);}
+export async function addToken(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: NEW TOKEN",req.body);}
+  CorsOptions(res);
   let token  = req.body.token;
 
   // Check if the Browser Token exists
@@ -542,14 +558,15 @@ export async function addToken(req, res) { if (Boolean(process.env.DEBUGGING)) {
   // Add a new generated token for the user
   try { 
     const token = await MODEL.insertGeneratedToken(result[0]['user_id']);
-    MODEL.logger("WEB", "tokens", result[0]['user_id'], token[0]['id'], "new");
+    MODEL.logger("WEB", "tokens", result[0]['user_id'], token['id'], "new");
     return res.json({ msg: "Success" });
   } catch (SQLError) {console.log(SQLError); 
     return res.status(409).json({ error: "SQL Error" });
   }
 }
 
-export async function deleteTokensMoreThan1(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELETE MULTIPLE TOKENS",req.body);}
+export async function deleteTokensMoreThan1(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: DELETE MULTIPLE TOKENS",req.body);}
+  CorsOptions(res);
   let token_ids = req.body.token_ids;
   let token     = req.body.token;
 
@@ -599,7 +616,8 @@ export async function deleteTokensMoreThan1(req, res) { if (Boolean(process.env.
   }
 }
 
-export async function changeUsername(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: CHANGE USERNAME",req.body);}
+export async function changeUsername(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: CHANGE USERNAME",req.body);}
+  CorsOptions(res);
   const token           = req.body.token;
   const new_username    = req.body['new_username'];
   const password_input  = req.body['password_input'];
@@ -668,7 +686,8 @@ export async function changeUsername(req, res) { if (Boolean(process.env.DEBUGGI
   }
 }
 
-export async function changePassword(req, res) { if (Boolean(process.env.DEBUGGING)) {console.log("Debug: CHANGE PASSWORD",req.body);}
+export async function changePassword(req, res) { //if (Boolean(process.env.DEBUGGING)) {console.log("Debug: CHANGE PASSWORD",req.body);}
+  CorsOptions(res);
   const token           = req.body.token;
   const new_password    = req.body['new_password'];
   const password_input  = req.body['password_input'];

@@ -13,6 +13,7 @@ const port = 3000;
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cors());
 
 app.set('views', './src/views');
@@ -24,5 +25,5 @@ app.use("/var", varRoutes);
 app.use("/private", privateRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on port http://localhost:${port}/`);
+    console.log(`Server is running: Changed URL`);
 });
